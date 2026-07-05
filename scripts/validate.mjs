@@ -40,14 +40,23 @@ function checkDirStructure() {
 // 2. 必需文件验证
 // =========================================================
 const REQUIRED_FILES = {
-  'pages': ['HomePage.ets', 'CourseInputPage.ets', 'CourseAnalysisPage.ets',
-    'KnowledgeMapPage.ets', 'ReviewCardPage.ets', 'PlanPage.ets'],
-  'components': ['StudyTaskCard.ets', 'KnowledgePointCard.ets', 'ReviewCardView.ets',
-    'PriorityTag.ets', 'DifficultyTag.ets', 'ImportanceTag.ets', 'EmptyState.ets', 'SectionHeader.ets'],
+  'pages': ['HomePage.ets', 'SplashPage.ets', 'LoginPage.ets', 'RegisterPage.ets',
+    'OnboardingPage.ets', 'MainPage.ets', 'CourseInputPage.ets', 'CourseAnalysisPage.ets',
+    'KnowledgeMapPage.ets', 'ReviewCardPage.ets', 'PlanPage.ets', 'RandomReviewPage.ets',
+    'QuestionBankPage.ets', 'QuestionDetailPage.ets', 'WrongQuestionPage.ets',
+    'CoachPage.ets', 'ProfilePage.ets', 'SettingsPage.ets'],
+  'components': ['PageHeader.ets', 'LoadingView.ets', 'AppButton.ets', 'MockBanner.ets',
+    'SectionCard.ets', 'SectionHeader.ets', 'ChipSelector.ets', 'StudyTaskCard.ets',
+    'KnowledgePointCard.ets', 'ReviewCardView.ets', 'PriorityTag.ets', 'DifficultyTag.ets',
+    'ImportanceTag.ets', 'EmptyState.ets'],
   'models': ['CourseMaterial.ets', 'CourseProfile.ets', 'KnowledgePoint.ets',
-    'StudyTask.ets', 'ReviewCard.ets', 'QuizItem.ets', 'LearningFeedback.ets'],
+    'StudyTask.ets', 'ReviewCard.ets', 'QuizItem.ets', 'LearningFeedback.ets',
+    'UserProfile.ets', 'QuestionItem.ets', 'WrongQuestion.ets', 'CoachMessage.ets',
+    'StudySettings.ets'],
   'services': ['DeepSeekClient.ets', 'PromptBuilder.ets', 'CourseParserAgent.ets',
-    'ReviewPlannerAgent.ets', 'FeedbackAgent.ets', 'CourseStore.ets', 'PlanStore.ets', 'MockData.ets'],
+    'ReviewPlannerAgent.ets', 'FeedbackAgent.ets', 'CoachAgent.ets',
+    'CourseStore.ets', 'PlanStore.ets', 'AuthStore.ets', 'QuestionBankStore.ets',
+    'ReviewSessionStore.ets', 'SettingsStore.ets', 'MockData.ets'],
   'utils': ['DateUtils.ets', 'IdUtils.ets', 'JsonUtils.ets', 'SafeParser.ets'],
   'common': ['Constants.ets', 'Theme.ets'],
   'entryability': ['EntryAbility.ets'],
@@ -366,8 +375,12 @@ function checkPageRoutes() {
   const config = JSON.parse(readFileSync(mainPagesPath, 'utf-8'))
 
   const expectedPages = [
-    'pages/HomePage', 'pages/CourseInputPage', 'pages/CourseAnalysisPage',
-    'pages/KnowledgeMapPage', 'pages/ReviewCardPage', 'pages/PlanPage'
+    'pages/SplashPage', 'pages/LoginPage', 'pages/RegisterPage',
+    'pages/OnboardingPage', 'pages/MainPage',
+    'pages/CourseInputPage', 'pages/CourseAnalysisPage',
+    'pages/KnowledgeMapPage', 'pages/ReviewCardPage', 'pages/PlanPage',
+    'pages/QuestionDetailPage', 'pages/RandomReviewPage',
+    'pages/WrongQuestionPage', 'pages/SettingsPage'
   ]
 
   const configuredPages = config.src || []

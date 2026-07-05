@@ -14,7 +14,7 @@ export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     hilog.info(0x0000, 'StudyFlow', 'Ability onWindowStageCreate');
 
-    windowStage.loadContent('pages/HomePage', (err) => {
+    windowStage.loadContent('pages/SplashPage', (err) => {
       if (err.code) {
         hilog.error(0x0000, 'StudyFlow', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err));
         return;

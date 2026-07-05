@@ -1,6 +1,6 @@
 /**
  * StudyFlow OS - 课程资料输入页
- * 支持文本输入、示例资料导入、AI解析
+ * 支持文本输入、示例资料导入、智能解析
  */
 
 import { router } from '@kit.ArkUI'
@@ -92,7 +92,7 @@ struct CourseInputPage {
     this.courseStore.addMaterial(material)
 
     promptAction.showToast({
-      message: '正在调用DeepSeek AI解析课程...',
+      message: '正在整理课程资料...',
       duration: 2000
     })
 
@@ -104,7 +104,7 @@ struct CourseInputPage {
       this.courseStore.addProfile(parseResult.data)
       this.courseStore.setCurrentProfile(parseResult.data)
 
-      const modeLabel = parseResult.isMock ? 'Mock兜底' : 'AI解析'
+      const modeLabel = parseResult.isMock ? 'Mock兜底' : '解析完成'
       promptAction.showToast({
         message: `${modeLabel}完成！生成${parseResult.data.knowledgePoints.length}个知识点`,
         duration: 2000
@@ -144,7 +144,7 @@ struct CourseInputPage {
         Column() {
           MockBanner({
             mockMessage: 'Mock模式 — 可直接使用示例资料进行演示',
-            apiMessage: 'DeepSeek AI 已接入 — 输入课程资料后点击AI解析'
+            apiMessage: 'DeepSeek AI 已接入 — 输入课程资料后开始整理'
           })
 
           // 课程名称
@@ -200,7 +200,7 @@ struct CourseInputPage {
           Column() {
             SecondaryButton({ label: '📥 使用示例资料', onAction: () => { this.loadSampleMaterial() } })
             PrimaryButton({
-              label: this.isSubmitting ? '解析中...' : '🤖 AI 解析课程',
+              label: this.isSubmitting ? '解析中...' : '📋 开始整理',
               isEnabled: !this.isSubmitting,
               onAction: () => { this.submitMaterial() }
             })

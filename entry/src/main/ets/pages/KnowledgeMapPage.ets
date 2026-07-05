@@ -97,7 +97,7 @@ struct KnowledgeMapPage {
       } else {
         Scroll() {
           Column() {
-            MockBanner({ mockMessage: 'Mock模式 — 知识点结构（分组卡片）', apiMessage: 'AI解析 — 知识点结构' })
+            MockBanner({ mockMessage: 'Mock模式 — 知识点结构（分组卡片）', apiMessage: '解析 — 知识点结构' })
 
             // 课程名
             Text(this.profile.courseName)

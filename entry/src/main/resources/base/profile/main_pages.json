@@ -1,10 +1,18 @@
 {
   "src": [
-    "pages/HomePage",
+    "pages/SplashPage",
+    "pages/LoginPage",
+    "pages/RegisterPage",
+    "pages/OnboardingPage",
+    "pages/MainPage",
     "pages/CourseInputPage",
     "pages/CourseAnalysisPage",
     "pages/KnowledgeMapPage",
     "pages/ReviewCardPage",
-    "pages/PlanPage"
+    "pages/PlanPage",
+    "pages/QuestionDetailPage",
+    "pages/RandomReviewPage",
+    "pages/WrongQuestionPage",
+    "pages/SettingsPage"
   ]
 }

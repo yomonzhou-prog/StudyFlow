@@ -11,6 +11,8 @@ import { StudyTask } from '../models/StudyTask'
 import { ReviewCard } from '../models/ReviewCard'
 import { QuizItem } from '../models/QuizItem'
 import { LearningFeedback } from '../models/LearningFeedback'
+import { QuestionItem } from '../models/QuestionItem'
+import { WrongQuestion } from '../models/WrongQuestion'
 import { DateUtils } from '../utils/DateUtils'
 
 export class MockData {
@@ -592,6 +594,178 @@ export class MockData {
       MockData.getSampleMaterial_probability(),
       MockData.getSampleMaterial_dataStructure(),
       MockData.getSampleMaterial_english()
+    ]
+  }
+
+  // ========== 示例题库 ==========
+
+  static getSampleQuestions(): QuestionItem[] {
+    return [
+      {
+        id: 'q-001',
+        courseName: '概率论与数理统计',
+        chapter: '4.1 数学期望',
+        knowledgePointId: 'kp-prob-001',
+        question: '掷一枚均匀骰子，设X为出现的点数，则E(X)等于？',
+        options: ['A. 3', 'B. 3.5', 'C. 4', 'D. 6'],
+        correctAnswer: 'B',
+        explanation: 'E(X)=1×(1/6)+2×(1/6)+3×(1/6)+4×(1/6)+5×(1/6)+6×(1/6)=21/6=3.5',
+        type: 'choice',
+        difficulty: 'easy',
+        source: '课后习题',
+        createdAt: DateUtils.daysAgo(3),
+        attemptCount: 0,
+        wrongCount: 0
+      },
+      {
+        id: 'q-002',
+        courseName: '概率论与数理统计',
+        chapter: '4.1 数学期望',
+        knowledgePointId: 'kp-prob-002',
+        question: '已知E(X)=5，则E(2X+3)等于？',
+        options: ['A. 10', 'B. 13', 'C. 16', 'D. 8'],
+        correctAnswer: 'B',
+        explanation: '利用期望的线性性质：E(2X+3)=2E(X)+3=2×5+3=13',
+        type: 'choice',
+        difficulty: 'easy',
+        source: '课堂测试',
+        createdAt: DateUtils.daysAgo(3),
+        attemptCount: 0,
+        wrongCount: 0
+      },
+      {
+        id: 'q-003',
+        courseName: '概率论与数理统计',
+        chapter: '4.2 方差',
+        knowledgePointId: 'kp-prob-003',
+        question: '设随机变量X满足E(X)=3，E(X²)=13，则D(X)等于？',
+        options: ['A. 4', 'B. 10', 'C. 13', 'D. 16'],
+        correctAnswer: 'A',
+        explanation: 'D(X)=E(X²)-[E(X)]²=13-9=4',
+        type: 'choice',
+        difficulty: 'easy',
+        source: '历年真题',
+        createdAt: DateUtils.daysAgo(2),
+        attemptCount: 0,
+        wrongCount: 0
+      },
+      {
+        id: 'q-004',
+        courseName: '概率论与数理统计',
+        chapter: '4.2 方差',
+        knowledgePointId: 'kp-prob-004',
+        question: '设X~B(10, 0.3)，则D(X)等于？',
+        options: ['A. 3', 'B. 2.1', 'C. 7', 'D. 0.21'],
+        correctAnswer: 'B',
+        explanation: '二项分布的方差D(X)=np(1-p)=10×0.3×0.7=2.1',
+        type: 'choice',
+        difficulty: 'medium',
+        source: '课后习题',
+        createdAt: DateUtils.daysAgo(2),
+        attemptCount: 0,
+        wrongCount: 0
+      },
+      {
+        id: 'q-005',
+        courseName: '概率论与数理统计',
+        chapter: '4.3 协方差与相关系数',
+        knowledgePointId: 'kp-prob-005',
+        question: '若X与Y相互独立，则Cov(X,Y)等于？',
+        options: ['A. 1', 'B. E(XY)', 'C. 0', 'D. D(X)'],
+        correctAnswer: 'C',
+        explanation: 'X与Y独立时，E(XY)=E(X)E(Y)，因此Cov(X,Y)=E(XY)-E(X)E(Y)=0',
+        type: 'choice',
+        difficulty: 'medium',
+        source: '课堂测试',
+        createdAt: DateUtils.daysAgo(2),
+        attemptCount: 0,
+        wrongCount: 0
+      },
+      {
+        id: 'q-006',
+        courseName: '概率论与数理统计',
+        chapter: '4.3 协方差与相关系数',
+        knowledgePointId: 'kp-prob-006',
+        question: '相关系数ρ_XY的取值范围是？',
+        options: ['A. [0, 1]', 'B. (-∞, +∞)', 'C. [-1, 1]', 'D. [0, +∞)'],
+        correctAnswer: 'C',
+        explanation: '相关系数标准化后取值范围为[-1, 1]，|ρ|=1表示完全线性相关，ρ=0表示不线性相关',
+        type: 'choice',
+        difficulty: 'medium',
+        source: '历年真题',
+        createdAt: DateUtils.daysAgo(1),
+        attemptCount: 0,
+        wrongCount: 0
+      },
+      {
+        id: 'q-007',
+        courseName: '概率论与数理统计',
+        chapter: '4.4 矩与协方差矩阵',
+        knowledgePointId: 'kp-prob-008',
+        question: '设X~P(λ)（泊松分布），则E(X)和D(X)分别等于？',
+        options: ['A. E=λ, D=λ²', 'B. E=λ, D=λ', 'C. E=1/λ, D=1/λ', 'D. E=λ, D=1/λ'],
+        correctAnswer: 'B',
+        explanation: '泊松分布的期望和方差都等于参数λ，这是泊松分布的重要特征',
+        type: 'choice',
+        difficulty: 'hard',
+        source: '期末考试',
+        createdAt: DateUtils.daysAgo(1),
+        attemptCount: 0,
+        wrongCount: 0
+      },
+      {
+        id: 'q-008',
+        courseName: '概率论与数理统计',
+        chapter: '4.1 数学期望',
+        knowledgePointId: 'kp-prob-001',
+        question: '设连续型随机变量X的概率密度为f(x)=2x (0<x<1)，则E(X)等于？',
+        options: ['A. 1/3', 'B. 2/3', 'C. 1/2', 'D. 1'],
+        correctAnswer: 'B',
+        explanation: 'E(X)=∫₀¹ x·2x dx = 2∫₀¹ x² dx = 2·(1/3) = 2/3',
+        type: 'choice',
+        difficulty: 'hard',
+        source: '历年真题',
+        createdAt: DateUtils.daysAgo(1),
+        attemptCount: 0,
+        wrongCount: 0
+      }
+    ]
+  }
+
+  static getSampleWrongQuestions(): WrongQuestion[] {
+    return [
+      {
+        id: 'wq-001',
+        questionId: 'q-003',
+        question: '设随机变量X满足E(X)=3，E(X²)=13，则D(X)等于？',
+        options: ['A. 4', 'B. 10', 'C. 13', 'D. 16'],
+        correctAnswer: 'A',
+        userAnswer: 'B',
+        explanation: 'D(X)=E(X²)-[E(X)]²=13-9=4',
+        courseName: '概率论与数理统计',
+        chapter: '4.2 方差',
+        knowledgePointId: 'kp-prob-003',
+        knowledgePointTitle: '方差的定义与计算',
+        wrongTime: DateUtils.daysAgo(1),
+        reviewCount: 0,
+        isMastered: false
+      },
+      {
+        id: 'wq-002',
+        questionId: 'q-005',
+        question: '若X与Y相互独立，则Cov(X,Y)等于？',
+        options: ['A. 1', 'B. E(XY)', 'C. 0', 'D. D(X)'],
+        correctAnswer: 'C',
+        userAnswer: 'B',
+        explanation: 'X与Y独立时，E(XY)=E(X)E(Y)，因此Cov(X,Y)=E(XY)-E(X)E(Y)=0',
+        courseName: '概率论与数理统计',
+        chapter: '4.3 协方差与相关系数',
+        knowledgePointId: 'kp-prob-005',
+        knowledgePointTitle: '协方差',
+        wrongTime: DateUtils.daysAgo(1),
+        reviewCount: 1,
+        isMastered: false
+      }
     ]
   }
 }

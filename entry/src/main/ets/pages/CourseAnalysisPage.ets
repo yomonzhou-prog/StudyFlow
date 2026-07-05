@@ -119,7 +119,7 @@ struct CourseAnalysisPage {
         Scroll() {
           Column() {
             // Mock提示
-            MockBanner({ mockMessage: 'AI解析结果（Mock模式）', apiMessage: 'DeepSeek AI 解析结果' })
+            MockBanner({ mockMessage: '解析结果（Mock模式）', apiMessage: 'DeepSeek 解析结果' })
 
             // 课程名称与摘要
             this.buildSummary()
@@ -437,7 +437,7 @@ struct CourseAnalysisPage {
   @Builder
   buildNoProfile() {
     Column() {
-      EmptyState({ icon: '🔍', message: '未找到课程画像，请先输入课程资料并进行AI解析' })
+      EmptyState({ icon: '🔍', message: '未找到课程画像，请先输入课程资料并进行解析' })
 
       Button('返回输入')
         .fontSize(Theme.FONT_MD)
