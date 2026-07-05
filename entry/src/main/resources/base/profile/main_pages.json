@@ -1,0 +1,10 @@
+{
+  "src": [
+    "pages/HomePage",
+    "pages/CourseInputPage",
+    "pages/CourseAnalysisPage",
+    "pages/KnowledgeMapPage",
+    "pages/ReviewCardPage",
+    "pages/PlanPage"
+  ]
+}

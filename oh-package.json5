@@ -1,0 +1,15 @@
+{
+  "name": "studyflow-os",
+  "version": "1.0.0",
+  "description": "StudyFlow OS - 基于HarmonyOS NEXT与DeepSeek V4的大学生学习任务操作系统",
+  "main": "",
+  "author": "",
+  "license": "ISC",
+  "modelVersion": "6.0.0",
+  "dependencies": {
+    "@ohos/hvigor-ohos-plugin": "6.1.1"
+  },
+  "devDependencies": {
+    "@ohos/hvigor": "6.1.1"
+  }
+}

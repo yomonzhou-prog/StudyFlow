@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "StudyFlow OS - 学习任务操作系统"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "StudyFlow OS"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "StudyFlow OS"
+    }
+  ]
+}

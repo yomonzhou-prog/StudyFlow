@@ -1,0 +1,33 @@
+# HarmonyOS NEXT / DevEco Studio
+build/
+**/build/
+outputs/
+.hvigor/
+*.hap
+*.hsp
+*.app
+
+# IDE
+.idea/
+*.iml
+.gradle/
+local.properties
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp
+*.log
+*.tmp
+temp_*
+screenshot.jpeg
+
+# Node (if used for tooling)
+node_modules/
+
+# Archive
+*.zip
+*.tar.gz
+*.7z
