@@ -5,14 +5,11 @@
  */
 
 import { router } from '@kit.ArkUI'
-import { picker } from '@kit.CoreFileKit'
 import { StudyTheme } from '../common/StudyTheme'
-import { ApiClient, ParseDocumentResult, QuestionCardDTO } from '../services/ApiClient'
+import { FileImportService, ImportResult, FilePickResult } from '../services/FileImportService'
 import { MathRenderer } from '../components/MathRenderer'
 import { QuestionCardStore } from '../services/QuestionCardStore'
 import { QuestionCard } from '../models/QuestionCard'
-import { IdUtils } from '../utils/IdUtils'
-import { DateUtils } from '../utils/DateUtils'
 
 // ─── 页面状态 ───
 
@@ -30,33 +27,24 @@ struct FileImportPage {
   @State selectedFileName: string = ''
   @State selectedFileUri: string = ''
   @State courseName: string = ''
-  @State parsedCards: QuestionCardDTO[] = []
+  @State parsedCards: QuestionCard[] = []
   @State parsedCourseName: string = ''
   @State parsedTotalCount: number = 0
   @State errorMessage: string = ''
   @State flipStates: boolean[] = []
-  private apiClient: ApiClient = ApiClient.getInstance()
+  private importService: FileImportService = FileImportService.getInstance()
   private cardStore: QuestionCardStore = QuestionCardStore.getInstance()
 
   // ─── 文件选择 ───
 
   async handleSelectFile(): Promise<void> {
-    try {
-      const documentPicker = new picker.DocumentViewPicker()
-      const uris: string[] = await documentPicker.select({
-        maxSelectNumber: 1,
-      })
-
-      if (uris.length > 0) {
-        const firstUri: string = uris[0]
-        this.selectedFileUri = firstUri
-        const parts: string[] = firstUri.split('/')
-        const lastName: string = parts[parts.length - 1]
-        this.selectedFileName = lastName
-        this.errorMessage = ''
-      }
-    } catch (error) {
-      this.errorMessage = `文件选择失败: ${JSON.stringify(error)}`
+    const result: FilePickResult | null = await this.importService.pickFile()
+    if (result !== null) {
+      this.selectedFileUri = result.uri
+      this.selectedFileName = result.fileName
+      this.errorMessage = ''
+    } else {
+      this.errorMessage = '未选择文件'
     }
   }
 
@@ -71,17 +59,16 @@ struct FileImportPage {
     this.currentStep = ImportStep.UPLOADING
     this.errorMessage = ''
 
-    const result = await this.apiClient.parseDocument(
+    const result: ImportResult = await this.importService.uploadAndParse(
       this.selectedFileUri,
       this.selectedFileName,
       this.courseName.trim(),
     )
 
     if (result.success) {
-      const data: ParseDocumentResult = result.data
-      this.parsedCards = data.cards
-      this.parsedCourseName = data.courseName
-      this.parsedTotalCount = data.totalCount
+      this.parsedCards = result.cards
+      this.parsedCourseName = result.courseName
+      this.parsedTotalCount = result.totalCount
       this.flipStates = []
       for (let i = 0; i < this.parsedCards.length; i++) {
         this.flipStates.push(false)
@@ -97,37 +84,7 @@ struct FileImportPage {
 
   handleImportToBank(): void {
     this.currentStep = ImportStep.IMPORTING
-
-    const newCards: QuestionCard[] = []
-    for (let i = 0; i < this.parsedCards.length; i++) {
-      const dto: QuestionCardDTO = this.parsedCards[i]
-      let difficulty: 'easy' | 'medium' | 'hard' = 'medium'
-      if (dto.difficulty === 'hard') {
-        difficulty = 'hard'
-      } else if (dto.difficulty === 'easy') {
-        difficulty = 'easy'
-      }
-      const card: QuestionCard = {
-        id: IdUtils.generate(),
-        courseName: dto.course_name.length > 0 ? dto.course_name : this.parsedCourseName,
-        question: dto.question,
-        options: dto.options,
-        answer: dto.answer,
-        explanation: dto.explanation,
-        relatedKnowledge: dto.related_knowledge,
-        difficulty: difficulty,
-        commonMistake: dto.common_mistake,
-        sourcePaperId: dto.source_paper_id,
-        isWrong: false,
-        reviewedCount: 0,
-        lastResult: '',
-        createdAt: DateUtils.now(),
-      }
-      newCards.push(card)
-    }
-
-    this.cardStore.addCards(newCards)
-
+    this.cardStore.addCards(this.parsedCards)
     setTimeout(() => {
       router.replaceUrl({ url: 'pages/ImmersiveReviewPage' })
     }, 300)
@@ -331,7 +288,7 @@ struct FileImportPage {
 
           // 卡片列表预览
           List() {
-            ForEach(this.parsedCards, (card: QuestionCardDTO, index: number) => {
+            ForEach(this.parsedCards, (card: QuestionCard, index: number) => {
               ListItem() {
                 Column() {
                   Row() {
@@ -356,8 +313,8 @@ struct FileImportPage {
                           .borderRadius(StudyTheme.RADIUS_SM)
                           .margin({ right: StudyTheme.SPACE_SM })
 
-                        if (card.related_knowledge.length > 0) {
-                          Text(card.related_knowledge[0])
+                        if (card.relatedKnowledge.length > 0) {
+                          Text(card.relatedKnowledge[0])
                             .fontSize(StudyTheme.FONT_XS)
                             .fontColor(StudyTheme.ACCENT)
                             .padding({ left: 6, right: 6, top: 2, bottom: 2 })
@@ -408,12 +365,12 @@ struct FileImportPage {
                         })
                       }
                       .width('100%')
-                      .margin({ bottom: card.common_mistake.length > 0 ? StudyTheme.SPACE_SM : 0 })
+                      .margin({ bottom: card.commonMistake.length > 0 ? StudyTheme.SPACE_SM : 0 })
                       .alignItems(VerticalAlign.Top)
 
-                      if (card.common_mistake.length > 0) {
+                      if (card.commonMistake.length > 0) {
                         Row() {
-                          Text(card.common_mistake)
+                          Text(card.commonMistake)
                             .fontSize(StudyTheme.FONT_XS)
                             .fontColor(StudyTheme.WARNING)
                             .padding(8)
@@ -434,7 +391,7 @@ struct FileImportPage {
                 .onClick(() => { this.toggleFlip(index) })
               }
               .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: StudyTheme.SPACE_SM })
-            }, (card: QuestionCardDTO, index: number) => `preview_${index}`)
+            }, (card: QuestionCard, index: number) => `preview_${index}`)
           }
           .layoutWeight(1)
           .scrollBar(BarState.Off)
