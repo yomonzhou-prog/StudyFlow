@@ -336,9 +336,9 @@ struct PlanPage {
       })
 
       SecondaryButton({
-        label: '🏠 返回驾驶舱',
+        label: '返回驾驶舱',
         onAction: () => {
-          router.pushUrl({ url: 'pages/MainPage' })
+          router.back()
         }
       })
     }

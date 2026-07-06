@@ -44,7 +44,7 @@ export class CourseParserAgent {
 
       if (!response.success || response.isMockFallback) {
         console.info('CourseParserAgent: DeepSeek调用失败，降级MockData:', response.errorMessage)
-        return this.getMockProfile(material.id)
+        return this.getMockProfile(material.id, material.courseName)
       }
 
       // 解析JSON响应
@@ -53,7 +53,7 @@ export class CourseParserAgent {
 
       if (!parseResult.isSuccess() || !parseResult.data) {
         console.info('CourseParserAgent: JSON解析失败，降级MockData:', parseResult.errorMessage)
-        return this.getMockProfile(material.id)
+        return this.getMockProfile(material.id, material.courseName)
       }
 
       // 补全profile字段
@@ -67,17 +67,20 @@ export class CourseParserAgent {
       return new ParseResult<CourseProfile>(profile, false, '')
     } catch (error) {
       console.error('CourseParserAgent.parseCourse error:', JSON.stringify(error))
-      return this.getMockProfile(material.id)
+      return this.getMockProfile(material.id, material.courseName)
     }
   }
 
   /**
-   * 获取Mock课程画像
+   * 获取Mock课程画像（课程感知：使用实际课程名）
    */
-  private getMockProfile(materialId: string): ParseResult<CourseProfile> {
+  private getMockProfile(materialId: string, courseName?: string): ParseResult<CourseProfile> {
     const profile = MockData.getSampleProfile_probability()
     profile.materialId = materialId
     profile.isMockData = true
+    if (courseName) {
+      profile.courseName = courseName
+    }
     return new ParseResult<CourseProfile>(profile, true, '使用MockData（AI服务不可用或为Mock模式）')
   }
 }

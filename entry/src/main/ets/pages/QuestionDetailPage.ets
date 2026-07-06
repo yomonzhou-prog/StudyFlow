@@ -24,6 +24,8 @@ struct QuestionDetailPage {
 
   private questionBankStore: QuestionBankStore = QuestionBankStore.getInstance()
   private questionId: string = ''
+  private questionList: QuestionItem[] = []
+  private currentQuestionIndex: number = -1
 
   aboutToAppear(): void {
     const params = router.getParams() as Record<string, Object>
@@ -37,7 +39,27 @@ struct QuestionDetailPage {
     if (this.questionBankStore.getQuestions().length === 0) {
       this.questionBankStore.initMockData()
     }
-    this.question = this.questionBankStore.getQuestionById(this.questionId) || null
+    this.questionList = this.questionBankStore.getQuestions()
+    this.currentQuestionIndex = this.questionList.findIndex(q => q.id === this.questionId)
+    this.question = this.questionList[this.currentQuestionIndex] || null
+    // Reset state for new question
+    this.selectedAnswer = ''
+    this.hasSubmitted = false
+    this.isCorrect = false
+  }
+
+  loadNextQuestion(): void {
+    if (this.currentQuestionIndex < this.questionList.length - 1) {
+      this.currentQuestionIndex++
+      this.questionId = this.questionList[this.currentQuestionIndex].id
+      this.question = this.questionList[this.currentQuestionIndex]
+      this.selectedAnswer = ''
+      this.hasSubmitted = false
+      this.isCorrect = false
+    } else {
+      promptAction.showToast({ message: '已是最后一题', duration: 1500 })
+      router.back()
+    }
   }
 
   handleSelectOption(option: string): void {
@@ -199,7 +221,7 @@ struct QuestionDetailPage {
                 PrimaryButton({
                   label: '下一题',
                   fullWidth: false,
-                  onAction: () => { router.back() }
+                  onAction: () => { this.loadNextQuestion() }
                 })
                 .layoutWeight(1)
                 .margin({ left: Theme.SPACING_MD })

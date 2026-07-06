@@ -7,6 +7,7 @@ import { StudyTask } from '../models/StudyTask'
 import { LearningFeedback } from '../models/LearningFeedback'
 import { ReviewCard } from '../models/ReviewCard'
 import { MockData } from './MockData'
+import { CourseStore } from './CourseStore'
 import { DateUtils } from '../utils/DateUtils'
 
 export interface WeakPoint {
@@ -133,12 +134,14 @@ export class PlanStore {
       }
     })
 
+    const courseStore = CourseStore.getInstance()
     const weakPoints: WeakPoint[] = []
     latestFeedbackMap.forEach((fb) => {
       if (fb.status === 'fuzzy' || fb.status === 'wrong') {
+        const kpChapter = this.resolveChapter(courseStore, fb.knowledgePointId)
         const wp: WeakPoint = {
           title: fb.knowledgePointTitle,
-          chapter: '',
+          chapter: kpChapter,
           difficulty: fb.status === 'wrong' ? 'hard' : 'medium',
           importance: 'high',
           lastFeedback: fb.status
@@ -147,6 +150,20 @@ export class PlanStore {
       }
     })
     return weakPoints
+  }
+
+  /**
+   * 根据知识点ID解析所属章节
+   */
+  private resolveChapter(courseStore: CourseStore, knowledgePointId: string): string {
+    const profiles = courseStore.getProfiles()
+    for (const profile of profiles) {
+      const kp = profile.knowledgePoints.find(p => p.id === knowledgePointId)
+      if (kp) {
+        return kp.chapter || ''
+      }
+    }
+    return ''
   }
 
   /**

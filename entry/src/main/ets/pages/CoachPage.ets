@@ -1,16 +1,11 @@
 /**
  * StudyFlow OS - 学习教练页
- * 聊天式 AI 对话界面，支持快捷提问卡片
+ * 学习策略建议面板
  */
 
-import { router } from '@kit.ArkUI'
 import { CoachAgent, CoachResult } from '../services/CoachAgent'
-import { CoachMessage, CoachCard } from '../models/CoachMessage'
-import { Constants } from '../common/Constants'
-import { Theme } from '../common/Theme'
-import { PageHeader } from '../components/PageHeader'
-import { LoadingView } from '../components/LoadingView'
-import { PrimaryButton } from '../components/AppButton'
+import { CoachMessage } from '../models/CoachMessage'
+import { StudyTheme } from '../common/StudyTheme'
 import { IdUtils } from '../utils/IdUtils'
 import { DateUtils } from '../utils/DateUtils'
 
@@ -19,159 +14,81 @@ export struct CoachPage {
   @State messages: CoachMessage[] = []
   @State inputText: string = ''
   @State isLoading: boolean = false
-  @State showQuickCards: boolean = true
-
   private coachAgent: CoachAgent = CoachAgent.getInstance()
-
-  private quickCards: CoachCard[] = [
-    { id: 'qc-1', emoji: '📋', title: '帮我制定学习计划', prompt: '请帮我制定一个学习计划' },
-    { id: 'qc-2', emoji: '📊', title: '查看学习进度', prompt: '我的学习进度怎么样' },
-    { id: 'qc-3', emoji: '💡', title: '推荐学习方法', prompt: '有什么好的学习方法推荐' },
-    { id: 'qc-4', emoji: '🌟', title: '鼓励我一下', prompt: '鼓励我一下' }
+  private quickActions: string[] = [
+    '帮我制定今日复习计划',
+    '我的薄弱点有哪些',
+    '推荐高效复习方法',
+    '给我一些鼓励'
   ]
 
   aboutToAppear(): void {
-    // 初始欢迎消息
-    const welcomeMsg: CoachMessage = {
-      id: IdUtils.generate(),
-      role: 'coach',
-      content: '👋 你好！我是你的学习教练。有什么学习方面的问题，尽管问我！',
+    this.messages = [{
+      id: IdUtils.generate(), role: 'coach',
+      content: '你好，我是你的学习教练。告诉我你的学习情况，我帮你制定复习策略。',
       timestamp: DateUtils.now()
-    }
-    this.messages = [welcomeMsg]
+    }]
   }
 
   async handleSend(): Promise<void> {
     const text = this.inputText.trim()
     if (!text || this.isLoading) return
-
-    // 添加用户消息
-    const userMsg: CoachMessage = {
-      id: IdUtils.generate(),
-      role: 'user',
-      content: text,
-      timestamp: DateUtils.now()
-    }
-    this.messages.push(userMsg)
+    this.messages.push({ id: IdUtils.generate(), role: 'user', content: text, timestamp: DateUtils.now() })
     this.inputText = ''
-    this.showQuickCards = false
     this.isLoading = true
-
-    // 调用教练 Agent
     const result: CoachResult = await this.coachAgent.chat(text, this.messages)
-
-    const coachMsg: CoachMessage = {
-      id: IdUtils.generate(),
-      role: 'coach',
-      content: result.content,
-      timestamp: DateUtils.now()
-    }
-    this.messages.push(coachMsg)
+    this.messages.push({ id: IdUtils.generate(), role: 'coach', content: result.content, timestamp: DateUtils.now() })
     this.isLoading = false
   }
 
-  handleQuickCard(card: CoachCard): void {
-    this.inputText = card.prompt
+  handleQuickAction(action: string): void {
+    this.inputText = action
     this.handleSend()
   }
 
   build() {
     Column() {
-      PageHeader({ title: '学习教练' })
-
-      if (this.showQuickCards && this.messages.length <= 1) {
-        // 快捷提问卡片
+      Text('学习教练').fontSize(StudyTheme.FONT_LG).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Medium)
+        .width('100%').textAlign(TextAlign.Center).padding({ top: StudyTheme.SPACE_XL, bottom: StudyTheme.SPACE_MD })
+      if (this.messages.length <= 1) {
         Column() {
-          Text('💡 你可以试着问我：')
-            .fontSize(Theme.FONT_SM)
-            .fontColor(Theme.TEXT_SECONDARY)
-            .margin({ bottom: Theme.SPACING_MD })
-
-          ForEach(this.quickCards, (card: CoachCard) => {
-            Row() {
-              Text(card.emoji).fontSize(20)
-              Text(card.title)
-                .fontSize(Theme.FONT_MD)
-                .fontColor(Theme.TEXT_PRIMARY)
-                .margin({ left: Theme.SPACING_SM })
-            }
-            .width('100%')
-            .padding(Theme.SPACING_MD)
-            .backgroundColor(Theme.CARD_BG)
-            .borderRadius(Theme.RADIUS_MD)
-            .margin({ bottom: Theme.SPACING_SM })
-            .onClick(() => { this.handleQuickCard(card) })
+          Text('可以试着问我：').fontSize(StudyTheme.FONT_SM).fontColor(StudyTheme.TEXT_HINT).margin({ bottom: StudyTheme.SPACE_MD })
+          ForEach(this.quickActions, (action: string) => {
+            Row() { Text(action).fontSize(StudyTheme.FONT_SM).fontColor(StudyTheme.TEXT_PRIMARY) }
+            .width('100%').padding(StudyTheme.SPACE_MD).backgroundColor(StudyTheme.CARD_BG).borderRadius(StudyTheme.RADIUS_MD).border({ width: 1, color: StudyTheme.CARD_BORDER }).margin({ bottom: StudyTheme.SPACE_SM })
+            .onClick(() => { this.handleQuickAction(action) })
           })
-        }
-        .width('100%')
-        .padding(Theme.SPACING_LG)
+        }.width('100%').padding(StudyTheme.SPACE_LG)
       }
-
-      // 消息列表
       List() {
         ForEach(this.messages, (msg: CoachMessage) => {
           ListItem() {
             Row() {
-              if (msg.role === 'user') {
-                Blank()
-              }
+              if (msg.role === 'user') Blank()
               Column() {
-                Text(msg.content)
-                  .fontSize(Theme.FONT_SM)
-                  .fontColor(msg.role === 'user' ? '#FFFFFF' : Theme.TEXT_PRIMARY)
-                  .lineHeight(22)
-                  .padding(Theme.SPACING_MD)
-                  .backgroundColor(msg.role === 'user' ? Theme.PRIMARY : Theme.CARD_BG)
-                  .borderRadius(Theme.RADIUS_LG)
-                  .constraintSize({ maxWidth: '80%' })
+                Text(msg.content).fontSize(StudyTheme.FONT_SM).fontColor(msg.role === 'user' ? '#FFFFFF' : StudyTheme.TEXT_PRIMARY).lineHeight(22).padding(StudyTheme.SPACE_MD)
+                .backgroundColor(msg.role === 'user' ? StudyTheme.ACCENT : StudyTheme.CARD_BG).borderRadius(StudyTheme.RADIUS_LG)
+                .border(msg.role === 'coach' ? { width: 1, color: StudyTheme.CARD_BORDER } : { width: 0 }).constraintSize({ maxWidth: '80%' })
               }
-              if (msg.role === 'coach') {
-                Blank()
-              }
+              if (msg.role === 'coach') Blank()
             }
-            .width('100%')
-            .padding({ left: Theme.SPACING_LG, right: Theme.SPACING_LG, bottom: Theme.SPACING_SM })
+            .width('100%').padding({ left: StudyTheme.SPACE_LG, right: StudyTheme.SPACE_LG, bottom: StudyTheme.SPACE_SM })
           }
         })
       }
-      .layoutWeight(1)
-      .scrollBar(BarState.Off)
-
-      // 输入栏
+      .layoutWeight(1).scrollBar(BarState.Off)
       Row() {
-        TextInput({ text: this.inputText, placeholder: '输入你的问题...' })
-          .fontSize(Theme.FONT_SM)
-          .backgroundColor(Theme.BG)
-          .borderRadius(Theme.RADIUS_XL)
-          .padding(Theme.SPACING_MD)
-          .layoutWeight(1)
-          .onChange((value: string) => { this.inputText = value })
-          .onSubmit(() => { this.handleSend() })
-
-        Row() {
-          Text('发送')
-            .fontSize(Theme.FONT_SM)
-            .fontColor('#FFFFFF')
-        }
-        .padding({ left: Theme.SPACING_LG, right: Theme.SPACING_LG, top: Theme.SPACING_SM, bottom: Theme.SPACING_SM })
-        .backgroundColor(this.inputText.trim() && !this.isLoading ? Theme.PRIMARY : Theme.TEXT_HINT)
-        .borderRadius(Theme.RADIUS_XL)
-        .margin({ left: Theme.SPACING_SM })
+        TextInput({ text: this.inputText, placeholder: '输入你的问题...' }).fontSize(StudyTheme.FONT_SM).backgroundColor(StudyTheme.BG).borderRadius(StudyTheme.RADIUS_FULL).padding(StudyTheme.SPACE_MD).layoutWeight(1)
+        .onChange((value: string) => { this.inputText = value }).onSubmit(() => { this.handleSend() })
+        Row() { Text('发送').fontSize(StudyTheme.FONT_SM).fontColor('#FFFFFF') }
+        .padding({ left: StudyTheme.SPACE_LG, right: StudyTheme.SPACE_LG, top: StudyTheme.SPACE_SM, bottom: StudyTheme.SPACE_SM })
+        .backgroundColor(this.inputText.trim() && !this.isLoading ? StudyTheme.ACCENT : StudyTheme.TEXT_HINT).borderRadius(StudyTheme.RADIUS_FULL).margin({ left: StudyTheme.SPACE_SM })
         .onClick(() => { this.handleSend() })
-
-        if (this.isLoading) {
-          LoadingProgress()
-            .width(24).height(24)
-            .color(Theme.PRIMARY)
-            .margin({ left: Theme.SPACING_SM })
-        }
+        if (this.isLoading) { LoadingProgress().width(24).height(24).color(StudyTheme.ACCENT).margin({ left: StudyTheme.SPACE_SM }) }
       }
-      .width('100%')
-      .padding({ left: Theme.SPACING_LG, right: Theme.SPACING_LG, top: Theme.SPACING_MD, bottom: Theme.SPACING_LG })
-      .backgroundColor(Theme.CARD_BG)
+      .width('100%').padding({ left: StudyTheme.SPACE_LG, right: StudyTheme.SPACE_LG, top: StudyTheme.SPACE_MD, bottom: StudyTheme.SPACE_LG })
+      .backgroundColor(StudyTheme.CARD_BG).border({ width: { top: 1 }, color: StudyTheme.BORDER })
     }
-    .width('100%')
-    .height('100%')
-    .backgroundColor(Theme.BG)
+    .width('100%').height('100%').backgroundColor(StudyTheme.BG)
   }
 }

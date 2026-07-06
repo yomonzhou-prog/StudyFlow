@@ -13,6 +13,10 @@ outputs/
 .gradle/
 local.properties
 
+# API Keys (keep template, ignore real config)
+**/ApiConfig.ets
+!**/ApiConfig.example.ets
+
 # OS
 .DS_Store
 Thumbs.db

@@ -11,8 +11,10 @@
     "pages/ReviewCardPage",
     "pages/PlanPage",
     "pages/QuestionDetailPage",
-    "pages/RandomReviewPage",
     "pages/WrongQuestionPage",
-    "pages/SettingsPage"
+    "pages/SettingsPage",
+    "pages/ExamSchedulePage",
+    "pages/ExamPaperImportPage",
+    "pages/ImmersiveReviewPage"
   ]
 }

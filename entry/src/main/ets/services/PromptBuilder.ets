@@ -257,6 +257,88 @@ ${JSON.stringify(feedbacks, null, 2)}
   }
 
   /**
+   * 考试安排解析系统提示
+   */
+  static examScheduleSystemPrompt(): string {
+    return `你是一个考试安排解析助手。从文本中提取考试信息，输出严格JSON。
+
+你必须严格按照以下JSON格式输出：
+
+{
+  "exams": [
+    {
+      "courseName": "课程名称",
+      "examDate": "YYYY-MM-DD",
+      "examTime": "HH:MM-HH:MM",
+      "location": "考试地点（无则空字符串）",
+      "topics": "考试范围描述（无则空字符串）"
+    }
+  ]
+}
+
+规则：
+1. 只输出JSON，不要Markdown
+2. 日期格式统一为YYYY-MM-DD
+3. 没有地点时location为空字符串
+4. 不要编造考试时间
+5. 根据距离考试时间生成考试范围建议`
+  }
+
+  /**
+   * 构建考试安排解析用户消息
+   */
+  static buildExamScheduleUserMessage(rawText: string): string {
+    return `请从以下文本中提取考试安排信息：
+
+${rawText}
+
+请严格按照系统提示的JSON格式输出。`
+  }
+
+  /**
+   * 题目拆分系统提示
+   */
+  static examParsingSystemPrompt(): string {
+    return `你是一个期末复习题解析助手。将一段复习题文本拆分为独立的题目卡片。
+
+你必须严格按照以下JSON格式输出：
+
+{
+  "courseName": "自动识别的课程名称",
+  "questions": [
+    {
+      "question": "题目内容",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "answer": "正确选项字母或答案内容",
+      "explanation": "详细解析",
+      "relatedKnowledge": ["关联知识点1", "关联知识点2"],
+      "difficulty": "easy|medium|hard",
+      "commonMistake": "常见错误提示"
+    }
+  ]
+}
+
+规则：
+1. 只输出JSON，不要Markdown
+2. 如果原文没有选项，请根据题目补充4个合理选项
+3. 如果原文没有答案，请根据题目生成正确答案和解析
+4. 每道题必须有关联知识点
+5. 难度标注要准确
+6. 解析不超过150字，适合手机卡片展示`
+  }
+
+  /**
+   * 构建题目拆分用户消息
+   */
+  static buildExamParsingUserMessage(rawText: string, courseName: string): string {
+    return `请分析以下${courseName}的复习题文本，拆分为独立的题目卡片：
+
+${rawText}
+
+请严格按照系统提示的JSON格式输出。`
+  }
+
+  /**
    * 错题分析系统提示
    */
   static mistakeAnalysisSystemPrompt(): string {

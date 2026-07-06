@@ -6,6 +6,7 @@
 import { QuestionItem } from '../models/QuestionItem'
 import { WrongQuestion } from '../models/WrongQuestion'
 import { MockData } from './MockData'
+import { CourseStore } from './CourseStore'
 import { IdUtils } from '../utils/IdUtils'
 import { DateUtils } from '../utils/DateUtils'
 
@@ -90,6 +91,7 @@ export class QuestionBankStore {
    * 添加错题
    */
   addWrongQuestion(question: QuestionItem, userAnswer: string): void {
+    const kpTitle = this.resolveKnowledgePointTitle(question.knowledgePointId)
     const wq: WrongQuestion = {
       id: IdUtils.generate(),
       questionId: question.id,
@@ -101,12 +103,26 @@ export class QuestionBankStore {
       courseName: question.courseName,
       chapter: question.chapter,
       knowledgePointId: question.knowledgePointId,
-      knowledgePointTitle: '',
+      knowledgePointTitle: kpTitle,
       wrongTime: DateUtils.now(),
       reviewCount: 0,
       isMastered: false
     }
     this.wrongQuestions.unshift(wq)
+  }
+
+  /**
+   * 根据知识点ID解析标题
+   */
+  private resolveKnowledgePointTitle(knowledgePointId: string): string {
+    const profiles = CourseStore.getInstance().getProfiles()
+    for (const profile of profiles) {
+      const kp = profile.knowledgePoints.find(p => p.id === knowledgePointId)
+      if (kp) {
+        return kp.title
+      }
+    }
+    return ''
   }
 
   /**

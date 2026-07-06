@@ -139,7 +139,7 @@ export class ReviewPlannerAgent {
   }
 
   /**
-   * 获取Mock复习卡片
+   * 获取Mock复习卡片（课程感知：使用实际课程名和ID）
    */
   private getMockReviewCards(profile: CourseProfile): ParseResult<ReviewCard[]> {
     const cards = MockData.getSampleReviewCards_probability()

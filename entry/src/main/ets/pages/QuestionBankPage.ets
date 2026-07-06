@@ -1,19 +1,13 @@
 /**
  * StudyFlow OS - 题库页
- * 展示题目列表，支持按课程/难度筛选
+ * 题目列表，支持筛选和随机刷题
  */
 
 import { router } from '@kit.ArkUI'
 import { QuestionBankStore } from '../services/QuestionBankStore'
 import { QuestionItem } from '../models/QuestionItem'
-import { Constants } from '../common/Constants'
-import { Theme } from '../common/Theme'
-import { PageHeader } from '../components/PageHeader'
-import { LoadingView } from '../components/LoadingView'
-import { PrimaryButton } from '../components/AppButton'
-import { SectionHeader } from '../components/SectionHeader'
-import { DifficultyTag } from '../components/DifficultyTag'
-import { EmptyState } from '../components/EmptyState'
+import { StudyTheme } from '../common/StudyTheme'
+import { StatusBanner } from '../components/StatusBanner'
 
 @Component
 export struct QuestionBankPage {
@@ -22,8 +16,6 @@ export struct QuestionBankPage {
   @State selectedCourse: string = '全部'
   @State selectedDifficulty: string = '全部'
   @State isLoading: boolean = true
-  @State showCourseFilter: boolean = false
-  @State showDifficultyFilter: boolean = false
 
   private questionBankStore: QuestionBankStore = QuestionBankStore.getInstance()
 
@@ -36,178 +28,138 @@ export struct QuestionBankPage {
 
   applyFilter(): void {
     let result = this.questionBankStore.getQuestions()
-
     if (this.selectedCourse !== '全部') {
       result = result.filter(q => q.courseName === this.selectedCourse)
     }
     if (this.selectedDifficulty !== '全部') {
       result = result.filter(q => q.difficulty === this.selectedDifficulty)
     }
-
     this.questions = result
   }
 
   getCourseFilterOptions(): string[] {
-    const options: string[] = ['全部']
-    this.courseNames.forEach(name => options.push(name))
-    return options
+    const opts: string[] = ['全部']
+    this.courseNames.forEach(n => opts.push(n))
+    return opts
   }
 
-  getDifficultyFilterOptions(): string[] {
-    return ['全部', 'easy', 'medium', 'hard']
+  getDifficultyLabel(d: string): string {
+    if (d === '全部') return '全部难度'
+    if (d === 'easy') return '简单'
+    if (d === 'hard') return '困难'
+    return '中等'
   }
 
-  getDifficultyLabel(diff: string): string {
-    if (diff === '全部') return '全部难度'
-    return Constants.DIFFICULTY_LABELS[diff] || diff
-  }
-
-  getCourseLabel(name: string): string {
-    if (name === '全部') return '全部课程'
-    return name
+  getDiffColor(d: string): string {
+    if (d === 'easy') return StudyTheme.DIFF_EASY
+    if (d === 'hard') return StudyTheme.DIFF_HARD
+    return StudyTheme.DIFF_MEDIUM
   }
 
   build() {
     Column() {
-      if (this.isLoading) {
-        LoadingView({ message: '加载题库...' })
-      } else {
-        Column() {
-          PageHeader({ title: '题库' })
-
-          // 筛选栏
-          Row() {
-            Row() {
-              Text(this.getCourseLabel(this.selectedCourse))
-                .fontSize(Theme.FONT_SM)
-                .fontColor(Theme.TEXT_PRIMARY)
-              Image($r('sys.media.ohos_ic_public_arrow_down'))
-                .width(16).height(16).fillColor(Theme.TEXT_HINT).margin({ left: 4 })
-            }
-            .padding({ left: Theme.SPACING_MD, right: Theme.SPACING_MD, top: Theme.SPACING_SM, bottom: Theme.SPACING_SM })
-            .backgroundColor(Theme.CARD_BG)
-            .borderRadius(Theme.RADIUS_XL)
-            .onClick(() => { this.showCourseFilter = !this.showCourseFilter })
-
-            Row() {
-              Text(this.getDifficultyLabel(this.selectedDifficulty))
-                .fontSize(Theme.FONT_SM)
-                .fontColor(Theme.TEXT_PRIMARY)
-              Image($r('sys.media.ohos_ic_public_arrow_down'))
-                .width(16).height(16).fillColor(Theme.TEXT_HINT).margin({ left: 4 })
-            }
-            .padding({ left: Theme.SPACING_MD, right: Theme.SPACING_MD, top: Theme.SPACING_SM, bottom: Theme.SPACING_SM })
-            .backgroundColor(Theme.CARD_BG)
-            .borderRadius(Theme.RADIUS_XL)
-            .margin({ left: Theme.SPACING_SM })
-            .onClick(() => { this.showDifficultyFilter = !this.showDifficultyFilter })
-
-            Blank()
-
-            Text(`${this.questions.length} 题`)
-              .fontSize(Theme.FONT_XS)
-              .fontColor(Theme.TEXT_HINT)
-          }
-          .width('100%')
-          .padding({ left: Theme.SPACING_LG, right: Theme.SPACING_LG, bottom: Theme.SPACING_MD })
-
-          // 课程筛选下拉
-          if (this.showCourseFilter) {
-            Column() {
-              ForEach(this.getCourseFilterOptions(), (option: string) => {
-                Text(this.getCourseLabel(option))
-                  .fontSize(Theme.FONT_SM)
-                  .fontColor(this.selectedCourse === option ? Theme.PRIMARY : Theme.TEXT_PRIMARY)
-                  .fontWeight(this.selectedCourse === option ? FontWeight.Bold : FontWeight.Regular)
-                  .padding(Theme.SPACING_MD)
-                  .width('100%')
-                  .onClick(() => {
-                    this.selectedCourse = option
-                    this.showCourseFilter = false
-                    this.applyFilter()
-                  })
-              })
-            }
-            .backgroundColor(Theme.CARD_BG)
-            .borderRadius(Theme.RADIUS_MD)
-            .margin({ left: Theme.SPACING_LG, right: Theme.SPACING_LG, bottom: Theme.SPACING_SM })
-          }
-
-          // 难度筛选下拉
-          if (this.showDifficultyFilter) {
-            Column() {
-              ForEach(this.getDifficultyFilterOptions(), (option: string) => {
-                Text(this.getDifficultyLabel(option))
-                  .fontSize(Theme.FONT_SM)
-                  .fontColor(this.selectedDifficulty === option ? Theme.PRIMARY : Theme.TEXT_PRIMARY)
-                  .fontWeight(this.selectedDifficulty === option ? FontWeight.Bold : FontWeight.Regular)
-                  .padding(Theme.SPACING_MD)
-                  .width('100%')
-                  .onClick(() => {
-                    this.selectedDifficulty = option
-                    this.showDifficultyFilter = false
-                    this.applyFilter()
-                  })
-              })
-            }
-            .backgroundColor(Theme.CARD_BG)
-            .borderRadius(Theme.RADIUS_MD)
-            .margin({ left: Theme.SPACING_LG, right: Theme.SPACING_LG, bottom: Theme.SPACING_SM })
-          }
-
-          // 题目列表
-          if (this.questions.length === 0) {
-            EmptyState({ icon: '📝', message: '暂无匹配的题目' })
-          } else {
-            List() {
-              ForEach(this.questions, (question: QuestionItem) => {
-                ListItem() {
-                  Row() {
-                    Column() {
-                      Text(question.question)
-                        .fontSize(Theme.FONT_MD)
-                        .fontColor(Theme.TEXT_PRIMARY)
-                        .fontWeight(FontWeight.Medium)
-                        .maxLines(2)
-                        .textOverflow({ overflow: TextOverflow.Ellipsis })
-                      Row() {
-                        Text(question.courseName)
-                          .fontSize(Theme.FONT_XS)
-                          .fontColor(Theme.TEXT_SECONDARY)
-                        DifficultyTag({ difficulty: question.difficulty })
-                          .margin({ left: Theme.SPACING_SM })
-                      }
-                      .margin({ top: Theme.SPACING_XS })
-                    }
-                    .layoutWeight(1)
-                    Image($r('sys.media.ohos_ic_public_arrow_right'))
-                      .width(20).height(20).fillColor(Theme.TEXT_HINT)
-                  }
-                  .width('100%')
-                  .padding(Theme.SPACING_MD)
-                  .backgroundColor(Theme.CARD_BG)
-                  .borderRadius(Theme.RADIUS_MD)
-                  .onClick(() => {
-                    router.pushUrl({
-                      url: 'pages/QuestionDetailPage',
-                      params: { questionId: question.id }
-                    })
-                  })
-                }
-                .margin({ bottom: Theme.SPACING_SM })
-              })
-            }
-            .layoutWeight(1)
-            .padding({ left: Theme.SPACING_LG, right: Theme.SPACING_LG })
-          }
-        }
+      Text('题库')
+        .fontSize(StudyTheme.FONT_LG)
+        .fontColor(StudyTheme.TEXT_PRIMARY)
+        .fontWeight(FontWeight.Medium)
         .width('100%')
-        .height('100%')
-        .backgroundColor(Theme.BG)
+        .textAlign(TextAlign.Center)
+        .padding({ top: StudyTheme.SPACE_XL, bottom: StudyTheme.SPACE_SM })
+
+      StatusBanner()
+
+      // Start random review button
+      Row() {
+        Text('开始随机刷题')
+          .fontSize(StudyTheme.FONT_SM)
+          .fontColor('#FFFFFF')
+          .fontWeight(FontWeight.Medium)
+      }
+      .width('100%')
+      .height(42)
+      .justifyContent(FlexAlign.Center)
+      .backgroundColor(StudyTheme.ACCENT)
+      .borderRadius(StudyTheme.RADIUS_MD)
+      .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: StudyTheme.SPACE_MD })
+      .onClick(() => { router.pushUrl({ url: 'pages/ImmersiveReviewPage' }) })
+
+      // Filters
+      Row() {
+        ForEach(['全部', 'easy', 'medium', 'hard'], (d: string) => {
+          Text(this.getDifficultyLabel(d))
+            .fontSize(StudyTheme.FONT_XS)
+            .fontColor(this.selectedDifficulty === d ? StudyTheme.ACCENT : StudyTheme.TEXT_HINT)
+            .fontWeight(this.selectedDifficulty === d ? FontWeight.Medium : FontWeight.Regular)
+            .padding({ left: 10, right: 10, top: 4, bottom: 4 })
+            .backgroundColor(this.selectedDifficulty === d ? StudyTheme.ACCENT_BG : 'transparent')
+            .borderRadius(StudyTheme.RADIUS_SM)
+            .margin({ right: StudyTheme.SPACE_SM })
+            .onClick(() => {
+              this.selectedDifficulty = d
+              this.applyFilter()
+            })
+        })
+      }
+      .width('100%')
+      .padding({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: StudyTheme.SPACE_MD })
+
+      // Question list
+      if (this.questions.length === 0) {
+        Column() {
+          Text('暂无匹配的题目')
+            .fontSize(StudyTheme.FONT_MD)
+            .fontColor(StudyTheme.TEXT_HINT)
+            .margin({ top: 80 })
+        }
+        .width('100%').height('100%')
+      } else {
+        List() {
+          ForEach(this.questions, (question: QuestionItem) => {
+            ListItem() {
+              Row() {
+                Column() {
+                  Text(question.question)
+                    .fontSize(StudyTheme.FONT_SM)
+                    .fontColor(StudyTheme.TEXT_PRIMARY)
+                    .fontWeight(FontWeight.Medium)
+                    .maxLines(2)
+                    .textOverflow({ overflow: TextOverflow.Ellipsis })
+                  Row() {
+                    Text(question.courseName)
+                      .fontSize(StudyTheme.FONT_XS)
+                      .fontColor(StudyTheme.TEXT_HINT)
+                    Text(this.getDifficultyLabel(question.difficulty))
+                      .fontSize(StudyTheme.FONT_XS)
+                      .fontColor(this.getDiffColor(question.difficulty))
+                      .margin({ left: StudyTheme.SPACE_SM })
+                  }
+                  .margin({ top: StudyTheme.SPACE_XS })
+                }
+                .layoutWeight(1)
+                Image($r('sys.media.ohos_ic_public_arrow_right'))
+                  .width(20).height(20).fillColor(StudyTheme.TEXT_HINT)
+              }
+              .width('100%')
+              .padding(StudyTheme.SPACE_MD)
+              .backgroundColor(StudyTheme.CARD_BG)
+              .borderRadius(StudyTheme.RADIUS_MD)
+              .border({ width: 1, color: StudyTheme.CARD_BORDER })
+              .onClick(() => {
+                router.pushUrl({
+                  url: 'pages/QuestionDetailPage',
+                  params: { questionId: question.id }
+                })
+              })
+            }
+            .margin({ bottom: StudyTheme.SPACE_SM })
+          })
+        }
+        .layoutWeight(1)
+        .padding({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD })
       }
     }
     .width('100%')
     .height('100%')
-    .backgroundColor(Theme.BG)
+    .backgroundColor(StudyTheme.BG)
   }
 }

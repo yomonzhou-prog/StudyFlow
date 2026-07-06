@@ -120,7 +120,7 @@ export class FeedbackAgent {
           newTasks.push({
             id: IdUtils.generate(),
             title: `重新学习：${fb.knowledgePointTitle}`,
-            courseName: '',
+            courseName: '当前课程',
             description: `自测做错了，需要重新学习该知识点的全部内容。注意：${fb.note}`,
             priority: 'high',
             estimatedMinutes: 45,
@@ -136,7 +136,7 @@ export class FeedbackAgent {
           newTasks.push({
             id: IdUtils.generate(),
             title: `巩固复习：${fb.knowledgePointTitle}`,
-            courseName: '',
+            courseName: '当前课程',
             description: `理解不够透彻，需要再次复习并做补充练习`,
             priority: 'medium',
             estimatedMinutes: 30,

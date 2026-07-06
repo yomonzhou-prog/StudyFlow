@@ -2,11 +2,13 @@
  * StudyFlow OS - 全局常量定义
  */
 
+import { ApiConfig } from './ApiConfig'
+
 export class Constants {
   // DeepSeek API
   static readonly DEEPSEEK_API_URL: string = 'https://api.deepseek.com/v1/chat/completions'
   static readonly DEEPSEEK_MODEL: string = 'deepseek-chat'
-  static readonly DEEPSEEK_API_KEY: string = 'sk-7b9291e6c67942baa11b6748eb09a32b' // 用户自行填入
+  static readonly DEEPSEEK_API_KEY: string = ApiConfig.DEEPSEEK_API_KEY
 
   // 应用配置
   static readonly APP_NAME: string = 'StudyFlow OS'

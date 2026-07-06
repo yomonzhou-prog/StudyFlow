@@ -1,10 +1,9 @@
 /**
  * StudyFlow OS - 主页面（底部 Tab 导航）
- * 4个Tab：学习 / 题库 / 学习教练 / 我的
+ * 4个Tab：复习 / 题库 / 教练 / 我的
  */
 
-import { router } from '@kit.ArkUI'
-import { Theme } from '../common/Theme'
+import { StudyTheme } from '../common/StudyTheme'
 import { HomePage } from './HomePage'
 import { QuestionBankPage } from './QuestionBankPage'
 import { CoachPage } from './CoachPage'
@@ -12,7 +11,6 @@ import { ProfilePage } from './ProfilePage'
 
 interface TabItem {
   label: string
-  emoji: string
 }
 
 @Entry
@@ -22,56 +20,38 @@ struct MainPage {
   private tabController: TabsController = new TabsController()
 
   private tabs: TabItem[] = [
-    { label: '学习', emoji: '📋' },
-    { label: '题库', emoji: '📝' },
-    { label: '教练', emoji: '💬' },
-    { label: '我的', emoji: '👤' }
+    { label: '复习' },
+    { label: '题库' },
+    { label: '教练' },
+    { label: '我的' }
   ]
 
   build() {
     Tabs({ barPosition: BarPosition.End, controller: this.tabController }) {
-      TabContent() {
-        HomePage()
-      }
+      TabContent() { HomePage() }
       .tabBar(this.buildTabBar(0))
-
-      TabContent() {
-        QuestionBankPage()
-      }
+      TabContent() { QuestionBankPage() }
       .tabBar(this.buildTabBar(1))
-
-      TabContent() {
-        CoachPage()
-      }
+      TabContent() { CoachPage() }
       .tabBar(this.buildTabBar(2))
-
-      TabContent() {
-        ProfilePage()
-      }
+      TabContent() { ProfilePage() }
       .tabBar(this.buildTabBar(3))
     }
-    .barHeight(56)
+    .barHeight(52)
     .barMode(BarMode.Fixed)
-    .onChange((index: number) => {
-      this.currentTab = index
-    })
-    .width('100%')
-    .height('100%')
+    .onChange((index: number) => { this.currentTab = index })
+    .width('100%').height('100%')
   }
 
   @Builder
   buildTabBar(index: number) {
     Column() {
-      Text(this.tabs[index].emoji)
-        .fontSize(22)
       Text(this.tabs[index].label)
-        .fontSize(10)
-        .fontColor(this.currentTab === index ? Theme.PRIMARY : Theme.TEXT_HINT)
-        .margin({ top: 2 })
+        .fontSize(12)
+        .fontWeight(this.currentTab === index ? FontWeight.Medium : FontWeight.Regular)
+        .fontColor(this.currentTab === index ? StudyTheme.ACCENT : StudyTheme.TEXT_HINT)
     }
-    .alignItems(HorizontalAlign.Center)
-    .justifyContent(FlexAlign.Center)
-    .width('100%')
-    .height('100%')
+    .alignItems(HorizontalAlign.Center).justifyContent(FlexAlign.Center)
+    .width('100%').height('100%')
   }
 }

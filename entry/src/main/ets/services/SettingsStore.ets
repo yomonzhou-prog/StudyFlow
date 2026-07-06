@@ -29,30 +29,16 @@ export class SettingsStore {
   }
 
   /**
-   * 更新设置
+   * 更新设置（合并模式）
    */
   updateSettings(partial: Partial<StudySettings>): void {
-    if (partial.dailyStudyGoal !== undefined) {
-      this.settings.dailyStudyGoal = partial.dailyStudyGoal
-    }
-    if (partial.dailyNewCards !== undefined) {
-      this.settings.dailyNewCards = partial.dailyNewCards
-    }
-    if (partial.dailyReviewCards !== undefined) {
-      this.settings.dailyReviewCards = partial.dailyReviewCards
-    }
-    if (partial.reminderTime !== undefined) {
-      this.settings.reminderTime = partial.reminderTime
-    }
-    if (partial.reminderEnabled !== undefined) {
-      this.settings.reminderEnabled = partial.reminderEnabled
-    }
-    if (partial.showMockBanner !== undefined) {
-      this.settings.showMockBanner = partial.showMockBanner
-    }
-    if (partial.themeMode !== undefined) {
-      this.settings.themeMode = partial.themeMode
-    }
+    if (partial.dailyStudyGoal !== undefined) { this.settings.dailyStudyGoal = partial.dailyStudyGoal }
+    if (partial.dailyNewCards !== undefined) { this.settings.dailyNewCards = partial.dailyNewCards }
+    if (partial.dailyReviewCards !== undefined) { this.settings.dailyReviewCards = partial.dailyReviewCards }
+    if (partial.reminderTime !== undefined) { this.settings.reminderTime = partial.reminderTime }
+    if (partial.reminderEnabled !== undefined) { this.settings.reminderEnabled = partial.reminderEnabled }
+    if (partial.showMockBanner !== undefined) { this.settings.showMockBanner = partial.showMockBanner }
+    if (partial.themeMode !== undefined) { this.settings.themeMode = partial.themeMode }
   }
 
   /**

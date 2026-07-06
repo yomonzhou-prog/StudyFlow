@@ -1,146 +1,49 @@
 /**
  * StudyFlow OS - 新手引导页
- * Swiper 展示 3 页功能介绍，最后一页可进入应用
  */
 
 import { router } from '@kit.ArkUI'
-import { Theme } from '../common/Theme'
-import { PrimaryButton } from '../components/AppButton'
+import { StudyTheme } from '../common/StudyTheme'
 
-interface OnboardingSlide {
-  emoji: string
-  title: string
-  description: string
-}
+interface OnboardingSlide { title: string; description: string }
 
 @Entry
 @Component
 struct OnboardingPage {
   @State currentIndex: number = 0
   private swiperController: SwiperController = new SwiperController()
-
   private slides: OnboardingSlide[] = [
-    {
-      emoji: '📋',
-      title: '输入课程资料',
-      description: '支持教材、PPT、通知、作业等多种资料类型。粘贴文本即可自动解析为结构化知识点。'
-    },
-    {
-      emoji: '🧠',
-      title: '知识点结构化',
-      description: 'DeepSeek AI 自动提取知识点、标注重要程度和难度，构建属于你的知识地图。'
-    },
-    {
-      emoji: '📝',
-      title: '智能复习闭环',
-      description: '自动生成复习卡片和自测题。反馈"掌握/模糊/做错"后，AI 会为你制定二次复习计划。'
-    }
+    { title: '导入复习资料', description: '粘贴期末复习题、考试安排、老师重点，系统自动拆分为一张张复习卡片。支持文本输入，拍照OCR功能开发中。' },
+    { title: '沉浸式卡片复习', description: '一题一卡，左右翻转。查看答案后选择认识、模糊或忘了，系统自动记录薄弱点，错题自动加入错题本。' },
+    { title: '智能复习规划', description: '根据考试倒计时、老师重点、错题反馈和知识点难度，自动计算复习优先级。每天告诉你今天该复习什么。' }
   ]
 
-  handleGetStarted(): void {
-    router.replaceUrl({ url: 'pages/LoginPage' })
-  }
-
-  handleSkip(): void {
-    router.replaceUrl({ url: 'pages/LoginPage' })
-  }
+  handleGetStarted(): void { router.replaceUrl({ url: 'pages/LoginPage' }) }
+  handleSkip(): void { router.replaceUrl({ url: 'pages/LoginPage' }) }
 
   build() {
     Column() {
-      // Skip button
-      Row() {
-        Blank()
-        Text('跳过')
-          .fontSize(Theme.FONT_MD)
-          .fontColor(Theme.TEXT_SECONDARY)
-          .padding({ left: Theme.SPACING_LG, right: Theme.SPACING_LG, top: Theme.SPACING_MD, bottom: Theme.SPACING_MD })
-          .onClick(() => { this.handleSkip() })
-      }
-      .width('100%')
-      .padding({ top: Theme.SPACING_XL, right: Theme.SPACING_MD })
-
-      // Swiper
+      Row() { Blank(); Text('跳过').fontSize(StudyTheme.FONT_MD).fontColor(StudyTheme.TEXT_SECONDARY).padding({ left: StudyTheme.SPACE_LG, right: StudyTheme.SPACE_LG, top: StudyTheme.SPACE_MD, bottom: StudyTheme.SPACE_MD }).onClick(() => { this.handleSkip() }) }
+      .width('100%').padding({ top: StudyTheme.SPACE_XL, right: StudyTheme.SPACE_MD })
       Swiper(this.swiperController) {
         ForEach(this.slides, (slide: OnboardingSlide) => {
           Column() {
-            Text(slide.emoji)
-              .fontSize(80)
-              .margin({ bottom: Theme.SPACING_XXL })
-
-            Text(slide.title)
-              .fontSize(Theme.FONT_XXL)
-              .fontColor(Theme.TEXT_PRIMARY)
-              .fontWeight(FontWeight.Bold)
-
-            Text(slide.description)
-              .fontSize(Theme.FONT_MD)
-              .fontColor(Theme.TEXT_SECONDARY)
-              .textAlign(TextAlign.Center)
-              .maxLines(4)
-              .lineHeight(24)
-              .padding({ left: Theme.SPACING_XXL, right: Theme.SPACING_XXL })
-              .margin({ top: Theme.SPACING_LG })
-          }
-          .justifyContent(FlexAlign.Center)
-          .alignItems(HorizontalAlign.Center)
-          .width('100%')
-          .height('100%')
+            Column() { Text(`${this.slides.indexOf(slide) + 1}`).fontSize(20).fontColor(StudyTheme.ACCENT).fontWeight(FontWeight.Bold) }
+            .width(48).height(48).borderRadius(24).backgroundColor(StudyTheme.ACCENT_BG).justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center).margin({ bottom: StudyTheme.SPACE_XXL })
+            Text(slide.title).fontSize(StudyTheme.FONT_XXL).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Bold)
+            Text(slide.description).fontSize(StudyTheme.FONT_MD).fontColor(StudyTheme.TEXT_SECONDARY).textAlign(TextAlign.Center).maxLines(5).lineHeight(24).padding({ left: StudyTheme.SPACE_XXL, right: StudyTheme.SPACE_XXL }).margin({ top: StudyTheme.SPACE_LG })
+          }.justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center).width('100%').height('100%')
         })
       }
-      .index(this.currentIndex)
-      .indicator(true)
-      .loop(false)
-      .duration(300)
-      .curve(Curve.EaseInOut)
-      .onChange((index: number) => { this.currentIndex = index })
-      .layoutWeight(1)
-
-      // Bottom area
+      .index(this.currentIndex).indicator(true).loop(false).duration(300).curve(Curve.EaseInOut).onChange((index: number) => { this.currentIndex = index }).layoutWeight(1)
       Column() {
-        // Dots indicator (custom)
-        Row() {
-          ForEach(this.slides, (_slide: OnboardingSlide, index: number) => {
-            Row()
-              .width(this.currentIndex === index ? 24 : 8)
-              .height(8)
-              .borderRadius(4)
-              .backgroundColor(this.currentIndex === index ? Theme.PRIMARY : Theme.BORDER)
-              .margin({ left: 4, right: 4 })
-              .animation({ duration: 200, curve: Curve.EaseInOut })
-          })
-        }
-        .justifyContent(FlexAlign.Center)
-        .width('100%')
-        .margin({ bottom: Theme.SPACING_LG })
-
-        PrimaryButton({
-          label: this.currentIndex === this.slides.length - 1 ? '开始学习' : '下一步',
-          onAction: () => {
-            if (this.currentIndex < this.slides.length - 1) {
-              this.swiperController.showNext()
-            } else {
-              this.handleGetStarted()
-            }
-          }
-        })
-
-        if (this.currentIndex < this.slides.length - 1) {
-          Text('跳过')
-            .fontSize(Theme.FONT_SM)
-            .fontColor(Theme.TEXT_SECONDARY)
-            .margin({ top: Theme.SPACING_LG })
-            .onClick(() => { this.handleSkip() })
-        }
-      }
-      .width('100%')
-      .padding({
-        left: Theme.SPACING_XXL,
-        right: Theme.SPACING_XXL,
-        bottom: Theme.SPACING_XXL
-      })
-    }
-    .width('100%')
-    .height('100%')
-    .backgroundColor(Theme.BG)
+        Row() { ForEach(this.slides, (_: OnboardingSlide, i: number) => { Row().width(this.currentIndex === i ? 24 : 8).height(8).borderRadius(4).backgroundColor(this.currentIndex === i ? StudyTheme.ACCENT : StudyTheme.BORDER).margin({ left: 4, right: 4 }).animation({ duration: 200, curve: Curve.EaseInOut }) }) }
+        .justifyContent(FlexAlign.Center).width('100%').margin({ bottom: StudyTheme.SPACE_LG })
+        Row() { Text(this.currentIndex === this.slides.length - 1 ? '开始学习' : '下一步').fontSize(StudyTheme.FONT_MD).fontColor('#FFFFFF').fontWeight(FontWeight.Medium) }
+        .width('100%').height(48).justifyContent(FlexAlign.Center).backgroundColor(StudyTheme.ACCENT).borderRadius(StudyTheme.RADIUS_MD)
+        .onClick(() => { if (this.currentIndex < this.slides.length - 1) this.swiperController.showNext(); else this.handleGetStarted() })
+        if (this.currentIndex < this.slides.length - 1) Text('跳过').fontSize(StudyTheme.FONT_SM).fontColor(StudyTheme.TEXT_SECONDARY).margin({ top: StudyTheme.SPACE_LG }).onClick(() => { this.handleSkip() })
+      }.width('100%').padding({ left: StudyTheme.SPACE_XXL, right: StudyTheme.SPACE_XXL, bottom: StudyTheme.SPACE_XXL })
+    }.width('100%').height('100%').backgroundColor(StudyTheme.BG)
   }
 }
