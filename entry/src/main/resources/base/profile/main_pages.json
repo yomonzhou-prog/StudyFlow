@@ -17,6 +17,7 @@
     "pages/ExamPaperImportPage",
     "pages/ImmersiveReviewPage",
     "pages/FileImportPage",
-    "pages/KnowledgeGraphPage"
+    "pages/KnowledgeGraphPage",
+    "pages/CoachPlannerPage"
   ]
 }

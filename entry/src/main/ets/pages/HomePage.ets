@@ -1,6 +1,6 @@
 /**
  * StudyFlow OS - 期末复习首页
- * 展示：考试倒计时、今日复习入口、复习优先级、轻量统计
+ * 三大复习场景入口 + 考试倒计时 + 今日复习 + 优先级 + 统计
  */
 
 import { router } from '@kit.ArkUI'
@@ -81,6 +81,7 @@ export struct HomePage {
     return p > 0 ? `今天还有 ${p} 张卡片待复习` : '今天的复习已完成'
   }
 
+
   build() {
     Column() {
       if (this.isLoading) {
@@ -92,7 +93,8 @@ export struct HomePage {
         Scroll() {
           Column() {
             StatusBanner()
-            // Greeting
+
+            // ═══ 问候语 ═══
             Column() {
               Text(this.getGreeting()).fontSize(StudyTheme.FONT_SM).fontColor(StudyTheme.TEXT_HINT)
               Row() {
@@ -104,7 +106,146 @@ export struct HomePage {
             .width('100%').alignItems(HorizontalAlign.Start)
             .padding({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, top: StudyTheme.SPACE_XL, bottom: StudyTheme.SPACE_LG })
 
-            // Exam countdown
+            // ══════════════════════════════════════
+            // 三大复习场景入口
+            // ══════════════════════════════════════
+            Column() {
+              Text('选择你的复习起点')
+                .fontSize(StudyTheme.FONT_SM)
+                .fontColor(StudyTheme.TEXT_HINT)
+                .fontWeight(FontWeight.Medium)
+                .width('100%')
+                .padding({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: StudyTheme.SPACE_MD })
+
+              // ── 场景一：有题库 ──
+              Row() {
+                // 左侧图标区
+                Column() {
+                  Text('📄')
+                    .fontSize(32)
+                    .width(56).height(56)
+                    .textAlign(TextAlign.Center)
+                    .backgroundColor('#E8F0FE')
+                    .borderRadius(16)
+                }
+                .margin({ right: StudyTheme.SPACE_MD })
+
+                // 中间文字
+                Column() {
+                  Text('有考试题库')
+                    .fontSize(StudyTheme.FONT_MD)
+                    .fontColor(StudyTheme.TEXT_PRIMARY)
+                    .fontWeight(FontWeight.Bold)
+                    .margin({ bottom: 2 })
+                  Text('老师发了明确的复习题或试卷，拍下来/上传 PDF，AI 自动拆成一题一卡')
+                    .fontSize(StudyTheme.FONT_XS)
+                    .fontColor(StudyTheme.TEXT_SECONDARY)
+                    .lineHeight(18)
+                    .maxLines(2)
+                    .textOverflow({ overflow: TextOverflow.Ellipsis })
+                }
+                .layoutWeight(1)
+                .alignItems(HorizontalAlign.Start)
+
+                // 右侧箭头
+                Text('→')
+                  .fontSize(20)
+                  .fontColor(StudyTheme.ACCENT)
+                  .fontWeight(FontWeight.Bold)
+              }
+              .width('100%')
+              .padding(StudyTheme.SPACE_MD)
+              .backgroundColor(StudyTheme.CARD_BG)
+              .borderRadius(StudyTheme.RADIUS_LG)
+              .border({ width: 1.5, color: '#D0E0F5' })
+              .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: StudyTheme.SPACE_SM })
+              .onClick(() => { router.pushUrl({ url: 'pages/FileImportPage' }) })
+
+              // ── 场景二：有重点 ──
+              Row() {
+                Column() {
+                  Text('📝')
+                    .fontSize(32)
+                    .width(56).height(56)
+                    .textAlign(TextAlign.Center)
+                    .backgroundColor('#E8F5E9')
+                    .borderRadius(16)
+                }
+                .margin({ right: StudyTheme.SPACE_MD })
+
+                Column() {
+                  Text('老师画了重点')
+                    .fontSize(StudyTheme.FONT_MD)
+                    .fontColor(StudyTheme.TEXT_PRIMARY)
+                    .fontWeight(FontWeight.Bold)
+                    .margin({ bottom: 2 })
+                  Text('上传课本或知识点总结 + 告诉 AI 老师划的重点，生成知识图谱和发散题卡')
+                    .fontSize(StudyTheme.FONT_XS)
+                    .fontColor(StudyTheme.TEXT_SECONDARY)
+                    .lineHeight(18)
+                    .maxLines(2)
+                    .textOverflow({ overflow: TextOverflow.Ellipsis })
+                }
+                .layoutWeight(1)
+                .alignItems(HorizontalAlign.Start)
+
+                Text('→')
+                  .fontSize(20)
+                  .fontColor('#2E7D32')
+                  .fontWeight(FontWeight.Bold)
+              }
+              .width('100%')
+              .padding(StudyTheme.SPACE_MD)
+              .backgroundColor(StudyTheme.CARD_BG)
+              .borderRadius(StudyTheme.RADIUS_LG)
+              .border({ width: 1.5, color: '#C8E6C9' })
+              .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: StudyTheme.SPACE_SM })
+              .onClick(() => { router.pushUrl({ url: 'pages/KnowledgeGraphPage' }) })
+
+              // ── 场景三：只有范围 ──
+              Row() {
+                Column() {
+                  Text('🤖')
+                    .fontSize(32)
+                    .width(56).height(56)
+                    .textAlign(TextAlign.Center)
+                    .backgroundColor('#FFF3E0')
+                    .borderRadius(16)
+                }
+                .margin({ right: StudyTheme.SPACE_MD })
+
+                Column() {
+                  Text('只有考试范围')
+                    .fontSize(StudyTheme.FONT_MD)
+                    .fontColor(StudyTheme.TEXT_PRIMARY)
+                    .fontWeight(FontWeight.Bold)
+                    .margin({ bottom: 2 })
+                  Text('老师只说了考什么范围。告诉 AI 教练课程和考试时间，帮你制定每日复习计划')
+                    .fontSize(StudyTheme.FONT_XS)
+                    .fontColor(StudyTheme.TEXT_SECONDARY)
+                    .lineHeight(18)
+                    .maxLines(2)
+                    .textOverflow({ overflow: TextOverflow.Ellipsis })
+                }
+                .layoutWeight(1)
+                .alignItems(HorizontalAlign.Start)
+
+                Text('→')
+                  .fontSize(20)
+                  .fontColor('#E65100')
+                  .fontWeight(FontWeight.Bold)
+              }
+              .width('100%')
+              .padding(StudyTheme.SPACE_MD)
+              .backgroundColor(StudyTheme.CARD_BG)
+              .borderRadius(StudyTheme.RADIUS_LG)
+              .border({ width: 1.5, color: '#FFE0B2' })
+              .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: StudyTheme.SPACE_LG })
+              .onClick(() => { router.pushUrl({ url: 'pages/CoachPlannerPage' }) })
+            }
+            .width('100%')
+
+            // ═══ 考试倒计时 ═══
             if (this.nearestExam) {
               Column() {
                 Row() {
@@ -127,7 +268,7 @@ export struct HomePage {
               .onClick(() => { router.pushUrl({ url: 'pages/ExamSchedulePage' }) })
             }
 
-            // Start review
+            // ═══ 开始今日复习 ═══
             Row() {
               Column() {
                 Text('开始今日复习').fontSize(StudyTheme.FONT_XL).fontColor(StudyTheme.TEXT_INVERSE).fontWeight(FontWeight.Bold)
@@ -141,7 +282,7 @@ export struct HomePage {
             .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: StudyTheme.SPACE_XL })
             .onClick(() => { router.pushUrl({ url: 'pages/ImmersiveReviewPage' }) })
 
-            // Priorities
+            // ═══ 复习优先级 ═══
             Column() {
               Text('复习优先级').fontSize(StudyTheme.FONT_SM).fontColor(StudyTheme.TEXT_HINT).fontWeight(FontWeight.Medium).margin({ bottom: StudyTheme.SPACE_MD })
               if (this.priorities.length === 0) {
@@ -178,7 +319,7 @@ export struct HomePage {
             }
             .width('100%').padding({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD }).margin({ bottom: StudyTheme.SPACE_XL })
 
-            // Stats
+            // ═══ 统计 ═══
             Row() {
               Column() {
                 Text(this.reviewedCount.toString()).fontSize(StudyTheme.FONT_XXL).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Bold)
