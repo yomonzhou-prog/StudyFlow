@@ -15,6 +15,8 @@
     "pages/SettingsPage",
     "pages/ExamSchedulePage",
     "pages/ExamPaperImportPage",
-    "pages/ImmersiveReviewPage"
+    "pages/ImmersiveReviewPage",
+    "pages/FileImportPage",
+    "pages/KnowledgeGraphPage"
   ]
 }

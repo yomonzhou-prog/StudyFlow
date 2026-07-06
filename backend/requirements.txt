@@ -1,0 +1,25 @@
+# StudyFlow OS Backend Dependencies
+# Python 3.10+
+
+# Web Framework
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.18
+
+# Data Validation
+pydantic==2.10.3
+
+# HTTP Client (for DeepSeek API calls)
+httpx==0.28.1
+
+# PDF Parsing
+PyMuPDF==1.25.1
+
+# Text Processing
+chardet==5.2.0
+
+# CORS
+# (built into FastAPI via starlette)
+
+# Environment
+python-dotenv==1.0.1
