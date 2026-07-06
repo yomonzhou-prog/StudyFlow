@@ -1,0 +1,344 @@
+# 📱 StudyFlow OS v3.1 — 完整功能与页面详解
+
+## 🏗️ 架构概览
+
+```
+20个页面 + 17个服务层 + 15个可复用组件 + 15个数据模型
+         ↓                    ↓                    ↓
+    ArkUI 声明式UI    Agent→DeepSeek API    Mock/Navigation
+```
+
+**技术栈**: HarmonyOS NEXT API 24 (6.1.1) · ArkTS · ArkUI · DeepSeek V4 · 单例状态管理
+
+---
+
+## 🗺️ 应用启动流程
+
+```
+SplashPage(1.5秒) → OnboardingPage(首次) / LoginPage / MainPage
+                                 游客 → 直接进入 MainPage
+                                 首次 → 3页引导页
+                                 已登录 → 直接进入 MainPage
+```
+
+---
+
+## 📑 完整页面清单（20个）
+
+### 一、启动与认证（5页）
+
+#### 1. SplashPage — 启动页
+- 显示 "S" Logo + "StudyFlow" + 加载动画 1.5 秒
+- 自动判断路由：已登录→MainPage / 首次→OnboardingPage / 否则→LoginPage
+
+#### 2. OnboardingPage — 新手引导
+- 3 页 Swiper 滑动引导，自定义圆点指示器
+- **第1页**: 导入复习资料 — 粘贴期末复习题、考试安排
+- **第2页**: 沉浸式卡片复习 — 一题一卡，认识/模糊/忘了
+- **第3页**: 智能复习规划 — 考试倒计时 + 老师重点 + 错题反馈
+- 支持"跳过"直接进登录
+
+#### 3. LoginPage — 登录
+- 用户名 + 密码输入（带表单校验）
+- "登录"按钮 + "立即注册"链接
+- "游客体验"按钮（一键游客模式，体验完整功能）
+- 分隔线 "或" 视觉设计
+
+#### 4. RegisterPage — 注册
+- 用户名（≥2字符）+ 邮箱（选填）+ 密码（≥6位）+ 确认密码
+- 实时表单校验 + 红色错误提示
+- 注册成功自动跳转 MainPage
+
+#### 5. ProfilePage — 个人中心（Tab 4: 我的）
+- **用户卡片**: 用户名、游客标识、连续天数、累计学习分钟
+- **学习数据**: 总任务数 / 已完成 / 已掌握卡片
+- **菜单入口**:
+  - 错题本 → WrongQuestionPage
+  - 学习设置 → SettingsPage
+  - 关于 StudyFlow（Toast 弹窗）
+- **登录/退出**: 游客显示"登录/注册"按钮，登录用户显示"退出登录"按钮（互斥展示）
+
+---
+
+### 二、主 Tab 页（4页）
+
+#### 6. MainPage — 底部 Tab 容器
+- 4 个 Tab：复习 | 题库 | 教练 | 我的
+- Tabs + TabContent，底部固定栏高 52px
+- 选中 Tab 蓝色高亮，其余灰色
+
+#### 7. HomePage — 复习首页（Tab 1: 复习）
+- **问好栏**: "早上好/下午好/晚上好，XXX，" + 今日待复习状态
+- **考试倒计时卡片**: 距最近考试天数（大号蓝色数字）+ 科目/时间/建议，点击进入考试管理
+- **"开始今日复习"按钮**: 显示卡片数和预计时间，点击进入沉浸式复习
+- **复习优先级 Top 3**:
+  - 知识点标题 + 课程名
+  - 高/中/低 优先级圆形标签（红/黄/绿）
+  - 理由和行动建议
+  - 数据来源: ReviewPriorityEngine.calculatePriorities()（综合薄弱点、考试倒计时、知识点难度）
+- **底部统计栏**: 已复习数 | 错题数 | 连续天数
+- 点击考试卡片→ExamSchedulePage，点击开始复习→ImmersiveReviewPage
+
+#### 8. QuestionBankPage — 题库（Tab 2: 题库）
+- **"开始随机刷题"按钮** → ImmersiveReviewPage
+- **难度筛选栏**: 全部 / 简单 / 中等 / 困难（Chip 切换，蓝色高亮选中）
+- **题目列表**: 每题显示题干（最多2行）+ 课程名 + 难度标签
+- 点击题目 → QuestionDetailPage（传 questionId）
+
+#### 9. CoachPage — 学习教练（Tab 3: 教练）
+- **对话式 AI 教练**
+- **快捷操作**（首屏显示）:
+  - "帮我制定今日复习计划"
+  - "我的薄弱点有哪些"
+  - "推荐高效复习方法"
+  - "给我一些鼓励"
+- **聊天界面**: 用户消息（蓝色气泡，右对齐）+ 教练回复（白底卡片，左对齐）
+- **底部输入栏**: TextInput + 发送按钮
+- **后端逻辑**:
+  - 非 Mock 模式 → DeepSeekClient.chatWithHistory() 多轮对话
+  - Mock 模式 → CoachAgent.generateLocalResponse() 本地规则兜底
+  - 本地规则支持：计划/进度/方法/鼓励等关键词匹配
+
+---
+
+### 三、复习闭环（4页）
+
+#### 10. ImmersiveReviewPage — 沉浸式复习卡片（核心页面）
+- **一题一卡**，仿 Anki 风格的间隔重复系统
+- **顶部**: 返回按钮 + 进度（N/M）+ 难度标签
+- **进度条**: 蓝色线性进度条
+- **知识点标签**: 卡片关联的知识点（蓝色 Chip）
+- **题干**: 大号字体展示
+- **查看答案**: 蓝色按钮，点击后展开：
+  - **答案**: 蓝色加粗大字
+  - **解析**: 灰色正文
+  - **常见错误**: 黄色警告背景卡片
+- **反馈三按钮**（查看答案后出现）:
+  - 🔴 忘了 — 加入错题，标红
+  - 🟡 模糊 — 标黄，次日再复习
+  - 🟢 认识 — 标绿，已掌握
+- **完成页**: 总题数/认识/模糊/忘了 统计，错题数提示，"再复习一次"+"返回首页"
+- **数据来源**: QuestionCardStore 的今日复习卡片
+
+#### 11. ReviewCardPage — 复习卡片（v2.0 老版复习）
+- 类似 ImmservieReview 但更详细
+- **进度指示**: 圆点状态条（●当前/✓已掌握/○未做）
+- **卡片内容**: 使用 ReviewCardView 组件展示
+- **反馈三态**: mastered（已掌握）/ fuzzy（模糊）/ wrong（做错了）
+- **二次复习建议**:
+  - 调用 FeedbackAgent.analyzeFeedback() 做 AI 分析
+  - 降级时用本地 generateLocalSuggestion() 生成建议文案
+- **导航**: 上一张/下一张/完成复习 → PlanPage
+- 反馈后自动生成新任务到 PlanStore
+
+#### 12. PlanPage — 复习计划（"再规划"）
+- **计划摘要**: 标题 + "基于N条学习反馈" + 4项统计（总任务/已完成/进行中/待完成）
+- **4 个 Tab**（可滚动水平切换）:
+  - **今日**: 截止日期是今天的 pending 任务
+  - **明日+反馈**: 明天的任务或弱项任务
+  - **薄弱点**: weaknessTasks（sourceType === 'weakness'）
+  - **临考冲刺**: 高优先级 pending 任务
+- **最近反馈**（横向滚动）: 知识点 + ✅/🤔/❌ 状态，彩色标签
+- **二次复习建议**:
+  - 重点关注薄弱点列表
+  - 时间安排建议
+  - 进度建议（学完→自测→错题当天→模糊次日）
+- **操作按钮**: "继续复习卡片"→ReviewCardPage，"返回驾驶舱"→router.back()
+
+#### 13. QuestionDetailPage — 答题页
+- **题目标签**: 课程名 + 难度标签 + 章节
+- **题干**: 大号字体
+- **选项列表**: A/B/C/D，点击选中（蓝色高亮）
+  - 提交后：正确选项绿色✓，错误用户选项红色✗
+- **结果反馈卡片**:
+  - ✅ 绿色卡片 + 解析
+  - ❌ 红色卡片 + 解析（自动加入错题本）
+- **按钮**:
+  - 未提交："提交答案"
+  - 已提交："返回题库" + "下一题"（自动加载同列表下一题，最后一题提示后返回）
+
+---
+
+### 四、课程与知识管理（4页）
+
+#### 14. CourseInputPage — 课程资料输入
+- **表单**: 课程名称 + 资料标题 + 资料类型 Select（PPT/教材/通知/作业/考试/错题）+ 内容文本域（180px）
+- **"使用示例资料"按钮**: 加载概率论 Mock 数据
+- **"开始整理"按钮**:
+  - 创建 CourseMaterial → CourseStore.addMaterial()
+  - 调用 CourseParserAgent.parseCourse() 进行 AI 解析
+  - 解析完成后跳转 CourseAnalysisPage
+
+#### 15. CourseAnalysisPage — 课程解析结果
+- **课程摘要**: 课程名 + 摘要描述
+- **章节结构**: 章节编号 + 标题 + 摘要 + 知识点数量徽章（可展开/收起）
+- **核心知识点**: 知识点标题 + 所属章节 + 重要性标签（可展开/收起）
+- **考试重点**: 重要性标签 + 主题 + 描述
+- **作业任务**: 任务标题 + 描述 + 优先级标签
+- **学习风险提醒**: 🔴🟡🟢 级别 + 信息 + 建议
+- **操作**: "生成复习卡片"（调用 ReviewPlannerAgent）→ ReviewCardPage
+- **数据来源**: CourseParserAgent 解析资料 → CourseProfile 存入 CourseStore
+
+#### 16. KnowledgeMapPage — 知识点结构
+- **课程名** + **知识结构描述**
+- **章节筛选**: Chip 横向滚动选择器，显示章节名+知识点数量
+- **统计**: 总知识点数 / 核心数 / 重要数
+- **知识点卡片列表**: 使用 KnowledgePointCard 组件
+- 点击卡片 → ReviewCardPage
+
+#### 17. ExamPaperImportPage — 复习题导入（v3.0 新增）
+- **输入**: 课程名称 + 复习题文本域（支持多题格式）
+- **"加载示例"**: 5 道概率论题目（分布律/期望/方差/协方差）
+- **"开始解析"**: 调用 ExamPaperParserAgent.parseExamText() → 拆分为 QuestionCard[]
+- **解析结果页**: 显示已识别 N 道题，每题展示序号+题干+知识点+难度
+- **底部**: "返回修改" + "开始刷题" → 导入到 QuestionCardStore 并跳转 ImmersiveReviewPage
+- 当前仅支持文本粘贴，OCR 拍照功能开发中
+
+---
+
+### 五、工具页面（3页）
+
+#### 18. WrongQuestionPage — 错题本
+- 只显示未掌握错题
+- 每条错题显示：
+  - 题目（最多3行）
+  - 你的答案（红色）+ 正确答案（绿色）
+  - 解析（2行）
+  - 知识点标签（蓝色 Chip）
+  - "掌握了"按钮 → 标记已掌握
+- 空状态：引导文案
+
+#### 19. ExamSchedulePage — 考试倒计时管理
+- **考试列表**: 每项显示倒计时天数 + 日期 + 课程名 + 时间·地点 + 建议
+- **添加考试**:
+  - 点击"添加"展开输入区
+  - 示例格式提示
+  - 粘贴文本解析（本地正则按行拆分）
+  - 自动计算 daysLeft 和 priority（≤3天高/≤7天中/其余低）
+- **优先级标签**: 红色"临近"/黄色"适中"/灰色"充裕"
+
+#### 20. SettingsPage — 学习设置
+- **学习偏好设置**:
+  - 每日学习时长（5-480分钟）
+  - 每日新卡片（1-100）
+  - 每日复习卡片
+  - 提醒时间 + 提醒开关 Toggle
+- **AI 状态面板**:
+  - 当前模式（Mock/在线/未配置）
+  - "测试连接"按钮 → 发送 ping 给 DeepSeek
+  - API Key 配置状态 + 模型名称
+- **操作**: 保存设置 / 恢复默认
+
+---
+
+## 🔧 服务层架构（17个）
+
+### Agent 层（调用 DeepSeek AI）
+
+| 服务 | 职责 | 关键方法 |
+|------|------|---------|
+| DeepSeekClient | 底层 HTTP 通信 | chat(), chatWithHistory() — 支持多轮对话，30s 连接超时，60s 读取超时 |
+| CoachAgent | 学习教练对话 | chat(userMessage, history) — 多轮对话，fail→本地规则兜底 |
+| CourseParserAgent | 课程资料→结构化画像 | parseCourse(material) → CourseProfile，Mock 感知课程名 |
+| ReviewPlannerAgent | 生成复习卡片+任务 | generateReviewCards(profile) / generateStudyTasks(profile) |
+| FeedbackAgent | 分析反馈+生成新任务 | analyzeFeedback(feedbacks, reviewCards) → 优化建议+新任务 |
+| ExamPaperParserAgent | 复习题文本→卡片 | parseExamText(text, courseName) → QuestionCard[] |
+| PromptBuilder | 构造 AI 提示词 | coachSystemPrompt(), reviewCardSystemPrompt() 等 |
+
+### Store 层（单例状态管理，内存存储）
+
+| 服务 | 管理数据 | 关键方法 |
+|------|---------|---------|
+| CourseStore | 课程资料+画像 | getCurrentProfile(), addMaterial(), addProfile() |
+| PlanStore | 复习卡片+任务+反馈 | getReviewCards(), getTasks(), getWeakKnowledgePoints(), addFeedback() |
+| AuthStore | 用户认证 | login(), register(), loginAsGuest(), isLoggedIn(), isFirstLaunch() |
+| QuestionBankStore | 题库+错题 | getQuestions(), addWrongQuestion(), markWrongQuestionMastered() |
+| QuestionCardStore | 沉浸式复习卡片 | getCards(), getTodayReviewCards(), markResult(), addCards() |
+| ExamStore | 考试安排 | getNearestExam(), getExamsByPriority(), getDaysLeft() |
+| SettingsStore | 学习设置 | updateSettings(), resetDefaults() |
+| ReviewSessionStore | 复习会话 | 会话状态管理 |
+| ReviewPriorityEngine | 复习优先级计算 | calculatePriorities(weak, wrong, daysLeft, kps) → 综合评分 |
+| MockData | Mock 数据工厂 | getSampleProfile_probability(), getSampleQuestions() 等 |
+
+---
+
+## 🧩 可复用组件（15个）
+
+| 组件 | 用途 | 参数 |
+|------|------|------|
+| StatusBanner | 顶部状态条（Mock/在线提示） | 自动检测 Constants.USE_MOCK |
+| MockBanner | Mock 模式提示横幅 | mockMessage, apiMessage |
+| PageHeader | 统一样式的页面标题栏 | title: string |
+| SectionHeader | 分区标题 | title, actionLabel?, onAction? |
+| SectionCard | 分区卡片容器 | content: @Builder |
+| EmptyState | 空数据占位 | icon, message |
+| LoadingView | 加载中状态 | message |
+| AppButton | 按钮（Primary/Secondary） | label, onAction, isEnabled?, fullWidth? |
+| ChipSelector | 横向 Chip 选择器 | options[], selectedValue, onSelect |
+| KnowledgePointCard | 知识点卡片 | knowledgePoint, onCardClick |
+| ReviewCardView | 复习卡片视图 | reviewCard, showAnswer, onShowAnswer, onFeedback |
+| StudyTaskCard | 学习任务卡片 | task, onToggle |
+| PriorityTag | 优先级标签（高/中/低） | priority |
+| DifficultyTag | 难度标签（简单/中等/困难） | difficulty |
+| ImportanceTag | 重要性标签（核心/重要/一般） | importance |
+
+---
+
+## 📦 数据模型（15个）
+
+CourseProfile · CourseMaterial · KnowledgePoint · ReviewCard · StudyTask · LearningFeedback · QuestionItem · WrongQuestion · QuestionCard · QuizItem · ExamSchedule · ReviewPriority · CoachMessage · UserProfile · StudySettings
+
+---
+
+## 🔀 核心业务流程
+
+```
+1. 导入资料
+   CourseInputPage → CourseParserAgent(DeepSeek) → CourseAnalysisPage
+                                                         ↓
+2. 生成卡片                              ReviewPlannerAgent → ReviewCardPage
+                                                         ↓
+3. 复习循环                ImmersiveReviewPage ←→ 认识/模糊/忘了反馈
+       ↓                              ↓
+   错题→WrongQuestionPage    FeedbackAgent→新任务→PlanPage
+                                                         ↓
+4. 考试驱动          ExamSchedulePage → 倒计时 → HomePage 优先级排序
+
+5. AI 教练           CoachPage → CoachAgent(多轮对话) → DeepSeek
+                                    ↓ 失败
+                              本地规则兜底
+```
+
+---
+
+## 🗺️ 完整导航流转图
+
+```
+启动 → SplashPage
+    |→ OnboardingPage → LoginPage → MainPage
+    |→ LoginPage → MainPage
+    |→ MainPage (4 Tabs)
+
+MainPage Tabs:
+  Tab1(复习) = HomePage
+    |→ ExamSchedulePage (考试倒计时)
+    |→ ImmersiveReviewPage (开始今日复习)
+  Tab2(题库) = QuestionBankPage
+    |→ ImmersiveReviewPage (随机刷题)
+    |→ QuestionDetailPage (单题作答)
+  Tab3(教练) = CoachPage (AI对话)
+  Tab4(我的) = ProfilePage
+    |→ WrongQuestionPage (错题本)
+    |→ SettingsPage (设置)
+    |→ LoginPage (登出/游客升级)
+
+CourseInputPage → CourseAnalysisPage
+  |→ ReviewCardPage → PlanPage
+  |→ KnowledgeMapPage → ReviewCardPage
+
+ExamPaperImportPage → ImmersiveReviewPage
+```
+
+---
+
+**总计**: 20 页面 · 17 服务 · 15 组件 · 15 模型 · ~75 .ets 文件 · 支持 API 24 (HarmonyOS NEXT 6.1.1)
