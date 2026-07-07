@@ -175,7 +175,7 @@ export struct StudyPlanCard {
                       if (this.isCompleted(task.id)) {
                         Text('✓')
                           .fontSize(12)
-                          .fontColor('#FFFFFF')
+                          .fontColor(StudyTheme.TEXT_INVERSE)
                           .fontWeight(FontWeight.Bold)
                       }
                     }

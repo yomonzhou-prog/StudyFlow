@@ -138,7 +138,7 @@ struct KnowledgeMapPage {
               Text(`核心: ${this.getFilteredKnowledgePoints().filter(k => k.importance === 'critical').length}`)
                 .fontSize(Theme.FONT_XS)
                 .fontColor(Theme.IMPORTANCE_CRITICAL_COLOR)
-                .backgroundColor('#F3E8FF')
+                .backgroundColor('#2A2520')
                 .borderRadius(Theme.RADIUS_SM)
                 .padding({ left: 8, right: 8, top: 2, bottom: 2 })
 

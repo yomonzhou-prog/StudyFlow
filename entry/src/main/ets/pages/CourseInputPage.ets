@@ -143,8 +143,8 @@ struct CourseInputPage {
       Scroll() {
         Column() {
           MockBanner({
-            mockMessage: 'Mock模式 — 可直接使用示例资料进行演示',
-            apiMessage: 'DeepSeek AI 已接入 — 输入课程资料后开始整理'
+            mockMessage: '演示模式 — 可直接使用示例资料',
+            apiMessage: '在线模式 — 输入课程资料后开始整理'
           })
 
           // 课程名称

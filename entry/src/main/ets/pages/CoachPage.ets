@@ -108,7 +108,7 @@ export struct CoachPage {
 
     if (result.success) {
       const data: PlannerChatResult = result.data
-      const reply: string = data.reply.length > 0 ? data.reply : '（AI 思考中...）'
+      const reply: string = data.reply.length > 0 ? data.reply : '（思考中...）'
       const coachMsg: CoachMessage = {
         id: IdUtils.generate(),
         role: 'coach',
@@ -170,7 +170,7 @@ export struct CoachPage {
           Circle({ width: 6, height: 6 })
             .fill(this.backendAvailable ? StudyTheme.SUCCESS : StudyTheme.WARNING)
             .margin({ right: 4 })
-          Text(this.backendAvailable ? 'AI在线' : '本地模式')
+          Text(this.backendAvailable ? '在线' : '本地')
             .fontSize(10)
             .fontColor(StudyTheme.TEXT_HINT)
         }
@@ -216,7 +216,7 @@ export struct CoachPage {
               Column() {
                 Text(msg.content)
                   .fontSize(StudyTheme.FONT_SM)
-                  .fontColor(msg.role === 'user' ? '#FFFFFF' : StudyTheme.TEXT_PRIMARY)
+                  .fontColor(msg.role === 'user' ? StudyTheme.TEXT_INVERSE : StudyTheme.TEXT_PRIMARY)
                   .lineHeight(22)
                   .padding(StudyTheme.SPACE_MD)
                   .backgroundColor(msg.role === 'user' ? StudyTheme.ACCENT : StudyTheme.CARD_BG)
@@ -273,7 +273,7 @@ export struct CoachPage {
         Row() {
           Text('发送')
             .fontSize(StudyTheme.FONT_SM)
-            .fontColor('#FFFFFF')
+            .fontColor(StudyTheme.TEXT_INVERSE)
         }
         .padding({ left: StudyTheme.SPACE_LG, right: StudyTheme.SPACE_LG, top: StudyTheme.SPACE_SM, bottom: StudyTheme.SPACE_SM })
         .backgroundColor(this.inputText.trim().length > 0 && !this.isLoading ? StudyTheme.ACCENT : StudyTheme.TEXT_HINT)

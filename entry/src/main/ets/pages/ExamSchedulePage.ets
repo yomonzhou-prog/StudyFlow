@@ -152,7 +152,7 @@ struct ExamSchedulePage {
                 Row() {
                   Text(this.isParsing ? '解析中...' : '确认添加')
                     .fontSize(StudyTheme.FONT_SM)
-                    .fontColor('#FFFFFF')
+                    .fontColor(StudyTheme.TEXT_INVERSE)
                     .padding({ left: 20, right: 20, top: 8, bottom: 8 })
                     .backgroundColor(this.isParsing ? StudyTheme.TEXT_HINT : StudyTheme.ACCENT)
                     .borderRadius(StudyTheme.RADIUS_FULL)

@@ -15,7 +15,7 @@ export struct PrimaryButton {
   build() {
     Button(this.label)
       .fontSize(Theme.FONT_MD)
-      .fontColor('#FFFFFF')
+      .fontColor(Theme.TEXT_INVERSE)
       .backgroundColor(this.isEnabled ? Theme.PRIMARY : Theme.TEXT_HINT)
       .borderRadius(Theme.RADIUS_LG)
       .height(48)

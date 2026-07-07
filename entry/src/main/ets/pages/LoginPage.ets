@@ -57,7 +57,7 @@ struct LoginPage {
             TextInput({ text: this.password, placeholder: '请输入密码（至少6位）' }).fontSize(StudyTheme.FONT_MD).backgroundColor(StudyTheme.BG).borderRadius(StudyTheme.RADIUS_MD).padding(StudyTheme.SPACE_MD).type(InputType.Password).onChange((v: string) => { this.password = v })
             if (this.showErrors && this.passwordError) Text(this.passwordError).fontSize(StudyTheme.FONT_XS).fontColor(StudyTheme.DANGER).margin({ top: StudyTheme.SPACE_XS })
           }.width('100%')
-          Row() { Text(this.isLoading ? '登录中...' : '登录').fontSize(StudyTheme.FONT_MD).fontColor('#FFFFFF').fontWeight(FontWeight.Medium) }
+          Row() { Text(this.isLoading ? '登录中...' : '登录').fontSize(StudyTheme.FONT_MD).fontColor(StudyTheme.TEXT_INVERSE).fontWeight(FontWeight.Medium) }
           .width('100%').height(48).justifyContent(FlexAlign.Center).backgroundColor(this.isLoading ? StudyTheme.TEXT_HINT : StudyTheme.ACCENT).borderRadius(StudyTheme.RADIUS_MD).margin({ top: StudyTheme.SPACE_XXL }).onClick(() => { this.handleLogin() })
           Row() {
             Text('还没有账号？').fontSize(StudyTheme.FONT_SM).fontColor(StudyTheme.TEXT_SECONDARY)

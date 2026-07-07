@@ -85,7 +85,7 @@ struct ImmersiveReviewPage {
             .fontColor(StudyTheme.TEXT_HINT)
             .margin({ bottom: StudyTheme.SPACE_MD })
           Row() {
-            Text('导入题目').fontSize(StudyTheme.FONT_SM).fontColor('#FFFFFF').fontWeight(FontWeight.Medium)
+            Text('导入题目').fontSize(StudyTheme.FONT_SM).fontColor(StudyTheme.TEXT_INVERSE).fontWeight(FontWeight.Medium)
               .padding({ left: 24, right: 24, top: 10, bottom: 10 })
               .backgroundColor(StudyTheme.ACCENT).borderRadius(StudyTheme.RADIUS_FULL)
           }
@@ -144,7 +144,7 @@ struct ImmersiveReviewPage {
 
           Blank()
           Row() {
-            Text('再复习一次').fontSize(StudyTheme.FONT_MD).fontColor('#FFFFFF').fontWeight(FontWeight.Medium)
+            Text('再复习一次').fontSize(StudyTheme.FONT_MD).fontColor(StudyTheme.TEXT_INVERSE).fontWeight(FontWeight.Medium)
           }
           .width('100%').height(52)
           .justifyContent(FlexAlign.Center)
@@ -329,7 +329,7 @@ struct ImmersiveReviewPage {
               Row() {
                 Text('查看答案')
                   .fontSize(StudyTheme.FONT_MD)
-                  .fontColor('#FFFFFF')
+                  .fontColor(StudyTheme.TEXT_INVERSE)
                   .fontWeight(FontWeight.Medium)
               }
               .width('100%').height(52)

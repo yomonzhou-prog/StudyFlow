@@ -93,7 +93,7 @@ struct ReviewCardPage {
         ? `${analyzeResult.data.analysis}\n\n${analyzeResult.data.summary}`
         : this.generateLocalSuggestion(status, card)
 
-      const modeLabel = analyzeResult.isMock ? '本地规则' : 'AI分析'
+      const modeLabel = analyzeResult.isMock ? '本地规则' : '智能分析'
       promptAction.showToast({
         message: `反馈已保存（${modeLabel}）`,
         duration: 2000

@@ -226,11 +226,11 @@ struct KnowledgeGraphPage {
   // ─── 节点颜色 ───
 
   getNodeColor(node: LayoutNode): string {
-    if (node.isHighlight) { return '#FF6B6B' }
-    if (node.level === 0) { return '#1F3A5F' }
-    if (node.level === 1) { return '#2E5A88' }
-    if (node.level === 2) { return '#4A90D9' }
-    return '#7BB3E0'
+    if (node.isHighlight) { return '#D4695A' }
+    if (node.level === 0) { return '#C8A96E' }
+    if (node.level === 1) { return '#B8956A' }
+    if (node.level === 2) { return '#9E8964' }
+    return '#8A7A5E'
   }
 
   // ─── 递归渲染节点 ───
@@ -241,11 +241,11 @@ struct KnowledgeGraphPage {
       Column() {
         Circle({ width: node.radius * 2, height: node.radius * 2 })
           .fill(this.getNodeColor(node))
-          .stroke(node.isHighlight ? '#FF4444' : '#FFFFFF')
+          .stroke(node.isHighlight ? '#D4695A' : StudyTheme.TEXT_PRIMARY)
           .strokeWidth(node.isHighlight ? 3 : 1.5)
           .shadow({
             radius: node.isHighlight ? 8 : 4,
-            color: node.isHighlight ? '#FF6B6B44' : '#1F3A5F22',
+            color: node.isHighlight ? '#D4695A44' : '#C8A96E22',
             offsetX: 0,
             offsetY: 2,
           })
@@ -263,9 +263,9 @@ struct KnowledgeGraphPage {
         if (node.isHighlight) {
           Text('★ 重点')
             .fontSize(10)
-            .fontColor('#FF4444')
+            .fontColor('#D4695A')
             .padding({ left: 4, right: 4, top: 1, bottom: 1 })
-            .backgroundColor('#FF444415')
+            .backgroundColor('#D4695A15')
             .borderRadius(4)
             .margin({ top: 2 })
         }
@@ -358,7 +358,7 @@ struct KnowledgeGraphPage {
             Row() {
               Text(`导入 ${node.divergentCards.length} 道发散题并开始复习`)
                 .fontSize(StudyTheme.FONT_SM)
-                .fontColor('#FFFFFF')
+                .fontColor(StudyTheme.TEXT_INVERSE)
                 .fontWeight(FontWeight.Medium)
             }
             .width('100%')
@@ -413,7 +413,7 @@ struct KnowledgeGraphPage {
           // ── 输入界面 ──
           Scroll() {
             Column() {
-              Text('粘贴教材内容或考纲，AI 自动生成知识拓扑图谱。命中教师重点的知识点将额外标注并附带发散复习题。')
+              Text('粘贴教材内容或考纲，自动生成知识拓扑图谱。命中教师重点的知识点将额外标注并附带发散复习题。')
                 .fontSize(StudyTheme.FONT_XS)
                 .fontColor(StudyTheme.TEXT_HINT)
                 .lineHeight(18)
@@ -475,11 +475,11 @@ struct KnowledgeGraphPage {
 
               Row() {
                 if (this.isLoading) {
-                  LoadingProgress().width(20).height(20).color('#FFFFFF').margin({ right: StudyTheme.SPACE_SM })
+                  LoadingProgress().width(20).height(20).color(StudyTheme.TEXT_INVERSE).margin({ right: StudyTheme.SPACE_SM })
                 }
-                Text(this.isLoading ? 'AI 正在构建知识图谱...' : '生成知识图谱')
+                Text(this.isLoading ? '正在构建知识图谱...' : '生成知识图谱')
                   .fontSize(StudyTheme.FONT_MD)
-                  .fontColor('#FFFFFF')
+                  .fontColor(StudyTheme.TEXT_INVERSE)
                   .fontWeight(FontWeight.Medium)
               }
               .width('100%')

@@ -1,6 +1,6 @@
 /**
  * StudyFlow OS — 学习规划教练独立页面
- * 场景三入口："只有考试范围，需要AI制定复习计划"
+ * 场景三入口："只有考试范围，需要制定复习计划"
  */
 
 import { CoachPage } from './CoachPage'

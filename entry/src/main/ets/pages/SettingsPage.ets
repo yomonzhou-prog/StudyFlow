@@ -1,6 +1,6 @@
 /**
  * StudyFlow OS - 设置页
- * 学习偏好设置 + AI 状态检测
+ * 学习偏好设置 + 服务状态检测
  */
 
 import { router } from '@kit.ArkUI'
@@ -18,9 +18,9 @@ struct SettingsPage {
   @State reviewCards: string = '20'
   @State reminderTime: string = '09:00'
   @State reminderEnabled: boolean = true
-  @State aiStatusLabel: string = ''
-  @State aiStatusDetail: string = ''
-  @State isTestingAI: boolean = false
+  @State serviceStatusLabel: string = ''
+  @State serviceStatusDetail: string = ''
+  @State isTestingService: boolean = false
 
   private settingsStore: SettingsStore = SettingsStore.getInstance()
   private deepSeekClient: DeepSeekClient = DeepSeekClient.getInstance()
@@ -32,26 +32,26 @@ struct SettingsPage {
     this.reviewCards = s.dailyReviewCards.toString()
     this.reminderTime = s.reminderTime
     this.reminderEnabled = s.reminderEnabled
-    this.checkAIStatus()
+    this.checkServiceStatus()
   }
 
-  checkAIStatus(): void {
+  checkServiceStatus(): void {
     if (Constants.USE_MOCK) {
-      this.aiStatusLabel = 'Mock 模式'
-      this.aiStatusDetail = '当前使用本地演示数据，非真实 AI 响应'
+      this.serviceStatusLabel = '本地模式'
+      this.serviceStatusDetail = '当前使用本地演示数据'
     } else if (!Constants.DEEPSEEK_API_KEY) {
-      this.aiStatusLabel = 'API Key 未配置'
-      this.aiStatusDetail = '请在 Constants.ets 中配置 DEEPSEEK_API_KEY'
+      this.serviceStatusLabel = 'API Key 未配置'
+      this.serviceStatusDetail = '请在 ApiConfig.ets 中配置 API Key'
     } else {
-      this.aiStatusLabel = '在线模式'
-      this.aiStatusDetail = 'DeepSeek API 已配置，正常连接中'
+      this.serviceStatusLabel = '在线模式'
+      this.serviceStatusDetail = '云端服务已配置，正常连接中'
     }
   }
 
-  async handleTestAI(): Promise<void> {
-    this.isTestingAI = true
-    this.aiStatusLabel = '测试中...'
-    this.aiStatusDetail = '正在发送测试请求...'
+  async handleTestService(): Promise<void> {
+    this.isTestingService = true
+    this.serviceStatusLabel = '测试中...'
+    this.serviceStatusDetail = '正在发送测试请求...'
 
     const response = await this.deepSeekClient.chat(
       '回复一个简短的确认消息。',
@@ -60,14 +60,14 @@ struct SettingsPage {
     )
 
     if (response.success && !response.isMockFallback) {
-      this.aiStatusLabel = '连接正常'
-      this.aiStatusDetail = 'DeepSeek API 响应成功'
+      this.serviceStatusLabel = '连接正常'
+      this.serviceStatusDetail = '云端服务响应成功'
     } else {
-      this.aiStatusLabel = '连接失败'
-      this.aiStatusDetail = response.errorMessage || '未知错误'
+      this.serviceStatusLabel = '连接失败'
+      this.serviceStatusDetail = response.errorMessage || '未知错误'
     }
 
-    this.isTestingAI = false
+    this.isTestingService = false
   }
 
   handleSave(): void {
@@ -157,9 +157,9 @@ struct SettingsPage {
           .border({ width: 1, color: StudyTheme.CARD_BORDER })
           .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD })
 
-          // AI Status
+          // 服务状态
           Column() {
-            Text('AI 状态')
+            Text('服务状态')
               .fontSize(StudyTheme.FONT_SM)
               .fontColor(StudyTheme.TEXT_HINT)
               .fontWeight(FontWeight.Medium)
@@ -167,11 +167,11 @@ struct SettingsPage {
 
             Row() {
               Column() {
-                Text(this.aiStatusLabel)
+                Text(this.serviceStatusLabel)
                   .fontSize(StudyTheme.FONT_MD)
                   .fontColor(StudyTheme.TEXT_PRIMARY)
                   .fontWeight(FontWeight.Medium)
-                Text(this.aiStatusDetail)
+                Text(this.serviceStatusDetail)
                   .fontSize(StudyTheme.FONT_XS)
                   .fontColor(StudyTheme.TEXT_HINT)
                   .margin({ top: 2 })
@@ -180,7 +180,7 @@ struct SettingsPage {
               .alignItems(HorizontalAlign.Start)
 
               Row() {
-                Text(this.isTestingAI ? '测试中' : '测试连接')
+                Text(this.isTestingService ? '测试中' : '测试连接')
                   .fontSize(StudyTheme.FONT_XS)
                   .fontColor(StudyTheme.ACCENT)
                   .fontWeight(FontWeight.Medium)
@@ -188,12 +188,12 @@ struct SettingsPage {
                   .border({ width: 1, color: StudyTheme.ACCENT })
                   .borderRadius(StudyTheme.RADIUS_SM)
               }
-              .onClick(() => { this.handleTestAI() })
+              .onClick(() => { this.handleTestService() })
             }
             .width('100%')
 
             Row() {
-              Text(`API Key: ${Constants.DEEPSEEK_API_KEY ? '已配置' : '未配置'}`)
+              Text(`后端服务: ${Constants.DEEPSEEK_API_KEY ? '已配置' : '未配置'}`)
                 .fontSize(StudyTheme.FONT_XS)
                 .fontColor(StudyTheme.TEXT_HINT)
               Text(`模型: ${Constants.DEEPSEEK_MODEL}`)
@@ -215,7 +215,7 @@ struct SettingsPage {
           Row() {
             Text('保存设置')
               .fontSize(StudyTheme.FONT_SM)
-              .fontColor('#FFFFFF')
+              .fontColor(StudyTheme.TEXT_INVERSE)
               .fontWeight(FontWeight.Medium)
           }
           .width('100%')

@@ -152,14 +152,17 @@ async def _call_ai_and_parse(extracted_text: str, course_hint: str) -> ParseDocu
     ds = get_deepseek()
     result = await ds.chat_json(PARSE_SYSTEM_PROMPT, user_prompt, temperature=0.3, max_tokens=8192)
 
+    course_name = result.get("course_name", course_hint.replace("课程名称：", "") or "未命名课程")
+
     cards: list[QuestionCard] = []
     for item in result.get("cards", []):
         try:
+            # AI 返回的 card 对象通常不含 course_name，由顶层提供 → 注入
+            if "course_name" not in item or not item.get("course_name"):
+                item["course_name"] = course_name
             cards.append(QuestionCard(**item))
         except ValidationError as ve:
             logger.warning(f"单张卡片校验失败，跳过: {ve.errors()}")
-
-    course_name = result.get("course_name", course_hint.replace("课程名称：", "") or "未命名课程")
 
     return ParseDocumentResponse(
         success=True,

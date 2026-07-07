@@ -8,7 +8,7 @@ import { StudyTheme } from '../common/StudyTheme'
 
 @Component
 export struct StatusBanner {
-  @Prop mockMessage: string = '离线演示模式'
+  @Prop mockMessage: string = '本地演示模式'
   @Prop apiMessage: string = '在线模式'
   @Prop showAlways: boolean = false
 

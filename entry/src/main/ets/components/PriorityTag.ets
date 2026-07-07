@@ -20,8 +20,8 @@ export struct PriorityTag {
 
   getColor(): string {
     switch (this.priority) {
-      case 'high': return '#FFFFFF'
-      case 'medium': return '#92400E'
+      case 'high': return Theme.TEXT_INVERSE
+      case 'medium': return '#B8956A'
       case 'low': return Theme.TEXT_SECONDARY
       default: return Theme.TEXT_SECONDARY
     }

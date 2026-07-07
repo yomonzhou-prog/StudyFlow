@@ -1,7 +1,6 @@
 /**
  * StudyFlow OS — 极简复习首页
- * 只保留：问好 + 考试倒计时 + 开始复习 + 优先级 + 统计
- * 新建任务统一收敛到右下角 FAB → 底部半屏面板
+ * 不背单词风格：暗色暖底 + 暖金点缀 + 大量留白
  */
 
 import { router } from '@kit.ArkUI'
@@ -13,7 +12,6 @@ import { ReviewPriorityEngine, KnowledgeRef } from '../services/ReviewPriorityEn
 import { ExamSchedule } from '../models/ExamSchedule'
 import { ReviewPriority } from '../models/ReviewPriority'
 import { StudyTheme } from '../common/StudyTheme'
-import { StatusBanner } from '../components/StatusBanner'
 
 @Component
 export struct HomePage {
@@ -78,12 +76,10 @@ export struct HomePage {
   getUserName(): string {
     return this.authStore.isLoggedIn() ? this.authStore.getCurrentUser()?.username || '同学' : '同学'
   }
-  getStatusText(): string {
-    const p = this.todayCardCount - this.reviewedCount
-    return p > 0 ? `还有 ${p} 张卡片等你复习` : '复习已完成，很棒'
-  }
 
-  // ─── 半屏面板内容 ───
+  // ═══════════════════════════════════════
+  // 半屏面板 — 新建复习任务
+  // ═══════════════════════════════════════
 
   @Builder
   SheetContent() {
@@ -91,94 +87,106 @@ export struct HomePage {
       // 拖拽指示条
       Row()
         .width(36).height(4)
-        .backgroundColor('#FFFFFF30')
+        .backgroundColor(StudyTheme.TEXT_HINT + '30')
         .borderRadius(2)
-        .margin({ top: 12, bottom: 24 })
+        .margin({ top: 12, bottom: 28 })
 
       Text('新建复习任务')
         .fontSize(20)
-        .fontColor('#FFFFFF')
+        .fontColor(StudyTheme.TEXT_PRIMARY)
         .fontWeight(FontWeight.Bold)
-        .margin({ bottom: 24 })
+        .margin({ bottom: 28 })
 
-      // 场景一：上传题库 PDF
+      // ── 上传题库 PDF ──
       Row() {
         Column() {
-          Text('📄').fontSize(28)
+          Text('📄').fontSize(24)
         }
         .width(52).height(52)
         .justifyContent(FlexAlign.Center)
-        .backgroundColor('#FFFFFF10')
+        .backgroundColor(StudyTheme.TEXT_PRIMARY + '08')
         .borderRadius(14)
         .margin({ right: 16 })
 
         Column() {
-          Text('上传题库 PDF').fontSize(16).fontColor('#FFFFFF').fontWeight(FontWeight.Medium).margin({ bottom: 2 })
-          Text('老师发了试卷/题库，AI 拆解成一题一卡').fontSize(12).fontColor('#FFFFFF60').maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis })
+          Text('上传题库 PDF')
+            .fontSize(16).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Medium).margin({ bottom: 2 })
+          Text('老师发了试卷或题库，拆解成复习卡片')
+            .fontSize(12).fontColor(StudyTheme.TEXT_SECONDARY).maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
         }
         .layoutWeight(1).alignItems(HorizontalAlign.Start)
 
         Image($r('sys.media.ohos_ic_public_arrow_right'))
-          .width(18).height(18).fillColor('#FFFFFF40')
+          .width(18).height(18).fillColor(StudyTheme.TEXT_HINT)
       }
       .width('100%').padding(16)
-      .backgroundColor('#FFFFFF08').borderRadius(16)
+      .backgroundColor(StudyTheme.TEXT_PRIMARY + '06')
+      .borderRadius(16).border({ width: 1, color: StudyTheme.BORDER })
       .margin({ bottom: 10 })
       .onClick(() => {
         this.showSheet = false
         router.pushUrl({ url: 'pages/FileImportPage' })
       })
 
-      // 场景二：划重点 → 知识图谱
+      // ── 老师画了重点 ──
       Row() {
         Column() {
-          Text('📝').fontSize(28)
+          Text('📝').fontSize(24)
         }
         .width(52).height(52)
         .justifyContent(FlexAlign.Center)
-        .backgroundColor('#FFFFFF10')
+        .backgroundColor(StudyTheme.TEXT_PRIMARY + '08')
         .borderRadius(14)
         .margin({ right: 16 })
 
         Column() {
-          Text('老师画了重点').fontSize(16).fontColor('#FFFFFF').fontWeight(FontWeight.Medium).margin({ bottom: 2 })
-          Text('粘贴知识点 + 重点范围，生成知识图谱和题卡').fontSize(12).fontColor('#FFFFFF60').maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis })
+          Text('老师画了重点')
+            .fontSize(16).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Medium).margin({ bottom: 2 })
+          Text('粘贴知识点与重点范围，生成知识图谱和题卡')
+            .fontSize(12).fontColor(StudyTheme.TEXT_SECONDARY).maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
         }
         .layoutWeight(1).alignItems(HorizontalAlign.Start)
 
         Image($r('sys.media.ohos_ic_public_arrow_right'))
-          .width(18).height(18).fillColor('#FFFFFF40')
+          .width(18).height(18).fillColor(StudyTheme.TEXT_HINT)
       }
       .width('100%').padding(16)
-      .backgroundColor('#FFFFFF08').borderRadius(16)
+      .backgroundColor(StudyTheme.TEXT_PRIMARY + '06')
+      .borderRadius(16).border({ width: 1, color: StudyTheme.BORDER })
       .margin({ bottom: 10 })
       .onClick(() => {
         this.showSheet = false
         router.pushUrl({ url: 'pages/KnowledgeGraphPage' })
       })
 
-      // 场景三：只有范围 → AI 规划
+      // ── 只有考试范围 ──
       Row() {
         Column() {
-          Text('🤖').fontSize(28)
+          Text('📅').fontSize(24)
         }
         .width(52).height(52)
         .justifyContent(FlexAlign.Center)
-        .backgroundColor('#FFFFFF10')
+        .backgroundColor(StudyTheme.TEXT_PRIMARY + '08')
         .borderRadius(14)
         .margin({ right: 16 })
 
         Column() {
-          Text('只有考试范围').fontSize(16).fontColor('#FFFFFF').fontWeight(FontWeight.Medium).margin({ bottom: 2 })
-          Text('告诉 AI 教练考试信息，自动制定每日复习计划').fontSize(12).fontColor('#FFFFFF60').maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis })
+          Text('只有考试范围')
+            .fontSize(16).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Medium).margin({ bottom: 2 })
+          Text('填写考试信息，自动生成每日复习计划')
+            .fontSize(12).fontColor(StudyTheme.TEXT_SECONDARY).maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
         }
         .layoutWeight(1).alignItems(HorizontalAlign.Start)
 
         Image($r('sys.media.ohos_ic_public_arrow_right'))
-          .width(18).height(18).fillColor('#FFFFFF40')
+          .width(18).height(18).fillColor(StudyTheme.TEXT_HINT)
       }
       .width('100%').padding(16)
-      .backgroundColor('#FFFFFF08').borderRadius(16)
+      .backgroundColor(StudyTheme.TEXT_PRIMARY + '06')
+      .borderRadius(16).border({ width: 1, color: StudyTheme.BORDER })
       .margin({ bottom: 30 })
       .onClick(() => {
         this.showSheet = false
@@ -190,7 +198,9 @@ export struct HomePage {
     .alignItems(HorizontalAlign.Center)
   }
 
-  // ─── 构建 ───
+  // ═══════════════════════════════════════
+  // 主页面构建
+  // ═══════════════════════════════════════
 
   build() {
     Stack() {
@@ -203,127 +213,114 @@ export struct HomePage {
         } else {
           Scroll() {
             Column() {
-              StatusBanner()
-
               // ═══ 问好 ═══
               Column() {
                 Text(this.getGreeting())
                   .fontSize(14).fontColor(StudyTheme.TEXT_HINT).fontWeight(FontWeight.Normal)
-                Row() {
-                  Text(`${this.getUserName()}，`)
-                    .fontSize(26).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Bold)
-                  Text(this.getStatusText())
-                    .fontSize(14).fontColor(StudyTheme.TEXT_HINT).layoutWeight(1).maxLines(1)
-                }
-                .width('100%').margin({ top: 2 }).alignItems(VerticalAlign.Bottom)
+                  .margin({ bottom: 6 })
+                Text(`${this.getUserName()}，`)
+                  .fontSize(28).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Bold)
               }
               .width('100%').alignItems(HorizontalAlign.Start)
-              .padding({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, top: StudyTheme.SPACE_XL, bottom: 24 })
+              .padding({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, top: StudyTheme.SPACE_XXXL, bottom: 8 })
 
-              // ═══ 考试倒计时（居中强化）═══
+              // ═══ 考试倒计时（暖金 + 毛玻璃卡片）═══
               if (this.nearestExam) {
                 Column() {
-                  Text(ExamStore.getDaysLeft(this.nearestExam.examDate).toString())
-                    .fontSize(56).fontColor('#FFFFFF').fontWeight(FontWeight.Bold)
-                  Text('天')
-                    .fontSize(14).fontColor(StudyTheme.TEXT_HINT)
-                    .margin({ top: 4, bottom: 16 })
+                  Row() {
+                    Text(ExamStore.getDaysLeft(this.nearestExam.examDate).toString())
+                      .fontSize(42).fontColor(StudyTheme.ACCENT).fontWeight(FontWeight.Bold)
+                    Text(' 天')
+                      .fontSize(16).fontColor(StudyTheme.TEXT_HINT)
+                  }
+                  .margin({ bottom: 12 })
+
                   Text(this.nearestExam.courseName)
-                    .fontSize(18).fontColor('#FFFFFF').fontWeight(FontWeight.Medium)
+                    .fontSize(16).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Medium)
+                    .margin({ bottom: 4 })
                   Text(`${this.nearestExam.examDate} · ${this.nearestExam.examTime}`)
                     .fontSize(12).fontColor(StudyTheme.TEXT_HINT)
-                    .margin({ top: 4 })
                 }
                 .width('100%')
-                .padding({ top: 32, bottom: 32 })
+                .padding({ top: 28, bottom: 28 })
                 .alignItems(HorizontalAlign.Center)
+                .backgroundColor(StudyTheme.TEXT_PRIMARY + '06')
+                .backdropBlur(16)
+                .border({ width: 1, color: StudyTheme.BORDER })
+                .borderRadius(StudyTheme.RADIUS_XL)
+                .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: 24 })
                 .onClick(() => { router.pushUrl({ url: 'pages/ExamSchedulePage' }) })
-                .margin({ bottom: 8 })
               }
 
-              // ═══ 今日复习数据（紧凑型）═══
+              // ═══ 今日数据（单行标签式）═══
               Row() {
-                Column() {
-                  Text(this.todayCardCount.toString()).fontSize(32).fontColor('#FFFFFF').fontWeight(FontWeight.Bold)
-                  Text('待复习').fontSize(11).fontColor(StudyTheme.TEXT_HINT).margin({ top: 2 })
-                }.layoutWeight(1).alignItems(HorizontalAlign.Center)
-                Column() {
-                  Text(this.reviewedCount.toString()).fontSize(32).fontColor('#FFFFFF').fontWeight(FontWeight.Bold)
-                  Text('已完成').fontSize(11).fontColor(StudyTheme.TEXT_HINT).margin({ top: 2 })
-                }.layoutWeight(1).alignItems(HorizontalAlign.Center)
-                Column() {
-                  Text(this.wrongCount.toString()).fontSize(32).fontColor('#FFFFFF').fontWeight(FontWeight.Bold)
-                  Text('错题').fontSize(11).fontColor(StudyTheme.TEXT_HINT).margin({ top: 2 })
-                }.layoutWeight(1).alignItems(HorizontalAlign.Center)
-                Column() {
-                  Text(`${this.streakDays}`).fontSize(32).fontColor('#FFFFFF').fontWeight(FontWeight.Bold)
-                  Text('连续天数').fontSize(11).fontColor(StudyTheme.TEXT_HINT).margin({ top: 2 })
-                }.layoutWeight(1).alignItems(HorizontalAlign.Center)
+                Text(`待复习 ${this.todayCardCount}`)
+                  .fontSize(13).fontColor(StudyTheme.TEXT_SECONDARY).fontWeight(FontWeight.Medium)
+                Text(' · ').fontSize(13).fontColor(StudyTheme.TEXT_HINT)
+                Text(`已完成 ${this.reviewedCount}`)
+                  .fontSize(13).fontColor(StudyTheme.TEXT_SECONDARY)
+                Text(' · ').fontSize(13).fontColor(StudyTheme.TEXT_HINT)
+                Text(`错题 ${this.wrongCount}`)
+                  .fontSize(13).fontColor(StudyTheme.TEXT_SECONDARY)
+                Text(' · ').fontSize(13).fontColor(StudyTheme.TEXT_HINT)
+                Text(`连续 ${this.streakDays} 天`)
+                  .fontSize(13).fontColor(StudyTheme.TEXT_SECONDARY)
               }
               .width('100%')
-              .padding({ top: 12, bottom: 12 })
-              .backgroundColor('#FFFFFF06')
-              .borderRadius(StudyTheme.RADIUS_LG)
-              .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: 4 })
+              .padding({ top: 6, bottom: 6 })
+              .justifyContent(FlexAlign.Center)
+              .margin({ bottom: 28 })
 
-              // ═══ 居中「开始今日复习」════
+              // ═══ 开始今日复习（暖金按钮，居中 + 窄）═══
               Row() {
-                Column() {
-                  Text('开始今日复习')
-                    .fontSize(20).fontColor('#FFFFFF').fontWeight(FontWeight.Bold)
-                  Text(`${this.todayCardCount} 张卡片 · 预计 ${Math.round(this.todayCardCount * 2)} 分钟`)
-                    .fontSize(12).fontColor('#FFFFFF60')
-                    .margin({ top: 4 })
-                }
-                .alignItems(HorizontalAlign.Center)
+                Text('开始今日复习')
+                  .fontSize(18).fontColor(StudyTheme.TEXT_INVERSE).fontWeight(FontWeight.Bold)
               }
-              .width('100%').height(72)
+              .width('80%').height(56)
               .justifyContent(FlexAlign.Center)
               .backgroundColor(StudyTheme.ACCENT)
               .borderRadius(StudyTheme.RADIUS_LG)
-              .margin({ left: StudyTheme.PAGE_PAD, right: StudyTheme.PAGE_PAD, bottom: 32 })
+              .shadow({ radius: 16, color: '#C8A96E40', offsetX: 0, offsetY: 4 })
+              .margin({ bottom: 36 })
               .onClick(() => { router.pushUrl({ url: 'pages/ImmersiveReviewPage' }) })
 
               // ═══ 复习优先级 ═══
               Column() {
                 Row() {
                   Text('复习优先级')
-                    .fontSize(13).fontColor(StudyTheme.TEXT_HINT).fontWeight(FontWeight.Medium)
+                    .fontSize(12).fontColor(StudyTheme.TEXT_HINT).fontWeight(FontWeight.Medium)
                     .layoutWeight(1)
                 }
-                .width('100%').margin({ bottom: 12 })
+                .width('100%').margin({ bottom: 16 })
 
                 if (this.priorities.length === 0) {
-                  Text('暂无 — 通过下方 [+] 导入课程资料')
+                  Text('暂无 — 通过右下角 [+] 导入课程资料')
                     .fontSize(12).fontColor(StudyTheme.TEXT_HINT)
                     .width('100%').padding({ top: 8, bottom: 8 })
                 } else {
                   ForEach(this.priorities.slice(0, 3), (item: ReviewPriority) => {
                     Row() {
-                      Column() {
-                        Text(item.level === 'high' ? '高' : item.level === 'medium' ? '中' : '低')
-                          .fontSize(10).fontColor('#FFFFFF').fontWeight(FontWeight.Bold)
-                      }
-                      .width(22).height(22).borderRadius(11)
-                      .backgroundColor(
-                        item.level === 'high' ? StudyTheme.PRIORITY_HIGH :
-                        item.level === 'medium' ? StudyTheme.PRIORITY_MEDIUM :
-                        StudyTheme.PRIORITY_LOW
-                      )
-                      .justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center)
-                      .margin({ right: 12 })
+                      // 空心圆点指示器
+                      Column()
+                        .width(10).height(10)
+                        .borderRadius(5)
+                        .border({ width: 2, color: item.level === 'high' ? StudyTheme.PRIORITY_HIGH :
+                          item.level === 'medium' ? StudyTheme.PRIORITY_MEDIUM : StudyTheme.PRIORITY_LOW })
+                        .backgroundColor(item.level === 'high' ? StudyTheme.PRIORITY_HIGH + '30' :
+                          item.level === 'medium' ? StudyTheme.PRIORITY_MEDIUM + '30' : StudyTheme.PRIORITY_LOW + '30')
+                        .margin({ right: 14 })
 
                       Column() {
                         Text(item.knowledgeTitle)
-                          .fontSize(15).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Medium)
-                          .margin({ bottom: 1 })
+                          .fontSize(16).fontColor(StudyTheme.TEXT_PRIMARY).fontWeight(FontWeight.Medium)
+                          .margin({ bottom: 2 })
                         Text(item.courseName)
                           .fontSize(11).fontColor(StudyTheme.TEXT_HINT)
                       }
                       .layoutWeight(1).alignItems(HorizontalAlign.Start)
                     }
                     .width('100%')
-                    .padding({ top: 12, bottom: 12 })
+                    .padding({ top: 14, bottom: 14 })
                   })
                 }
               }
@@ -337,24 +334,24 @@ export struct HomePage {
       }
       .width('100%').height('100%').backgroundColor(StudyTheme.BG)
 
-      // ════════════════════════════════
-      // FAB 悬浮按钮（毛玻璃质感）
-      // ════════════════════════════════
+      // ═══════════════════════════════════
+      // FAB 悬浮按钮（暖金毛玻璃）
+      // ═══════════════════════════════════
       Column() {
         Column() {
           Text('+')
-            .fontSize(28).fontColor('#FFFFFF').fontWeight(FontWeight.Lighter)
+            .fontSize(28).fontColor(StudyTheme.TEXT_INVERSE).fontWeight(FontWeight.Lighter)
         }
         .width(56).height(56)
         .justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center)
-        .backgroundColor('#1F3A5FCC')
+        .backgroundColor('#C8A96ECC')
         .borderRadius(28)
         .backdropBlur(12)
-        .shadow({ radius: 16, color: '#00000040', offsetX: 0, offsetY: 4 })
+        .shadow({ radius: 24, color: '#00000060', offsetX: 0, offsetY: 6 })
         .onClick(() => { this.showSheet = true })
         .bindSheet($$this.showSheet, this.SheetContent(), {
           height: SheetSize.MEDIUM,
-          backgroundColor: '#1A1A2E',
+          backgroundColor: StudyTheme.OVERLAY_BG,
           showClose: false,
           dragBar: false,
         })
@@ -362,7 +359,7 @@ export struct HomePage {
       .width('100%').height('100%')
       .alignItems(HorizontalAlign.End).justifyContent(FlexAlign.End)
       .padding({ right: 20, bottom: 24 })
-      .hitTestBehavior(HitTestMode.None)
+      .hitTestBehavior(HitTestMode.Transparent)
     }
     .width('100%').height('100%')
     .backgroundColor(StudyTheme.BG)

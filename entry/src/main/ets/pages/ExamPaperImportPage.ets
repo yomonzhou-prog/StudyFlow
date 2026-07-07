@@ -209,7 +209,7 @@ A. 1  B. E(XY)  C. 0  D. D(X)
           Row() {
             Text('开始刷题')
               .fontSize(StudyTheme.FONT_MD)
-              .fontColor('#FFFFFF')
+              .fontColor(StudyTheme.TEXT_INVERSE)
               .fontWeight(FontWeight.Medium)
           }
           .padding({ left: 32, right: 32, top: 12, bottom: 12 })
@@ -262,7 +262,7 @@ A. 1  B. E(XY)  C. 0  D. D(X)
               Row() {
                 Text(this.isParsing ? '解析中...' : '开始解析')
                   .fontSize(StudyTheme.FONT_SM)
-                  .fontColor('#FFFFFF')
+                  .fontColor(StudyTheme.TEXT_INVERSE)
                   .fontWeight(FontWeight.Medium)
                   .padding({ left: 24, right: 24, top: 10, bottom: 10 })
                   .backgroundColor(this.isParsing ? StudyTheme.TEXT_HINT : StudyTheme.ACCENT)

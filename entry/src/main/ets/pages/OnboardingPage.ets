@@ -39,7 +39,7 @@ struct OnboardingPage {
       Column() {
         Row() { ForEach(this.slides, (_: OnboardingSlide, i: number) => { Row().width(this.currentIndex === i ? 24 : 8).height(8).borderRadius(4).backgroundColor(this.currentIndex === i ? StudyTheme.ACCENT : StudyTheme.BORDER).margin({ left: 4, right: 4 }).animation({ duration: 200, curve: Curve.EaseInOut }) }) }
         .justifyContent(FlexAlign.Center).width('100%').margin({ bottom: StudyTheme.SPACE_LG })
-        Row() { Text(this.currentIndex === this.slides.length - 1 ? '开始学习' : '下一步').fontSize(StudyTheme.FONT_MD).fontColor('#FFFFFF').fontWeight(FontWeight.Medium) }
+        Row() { Text(this.currentIndex === this.slides.length - 1 ? '开始学习' : '下一步').fontSize(StudyTheme.FONT_MD).fontColor(StudyTheme.TEXT_INVERSE).fontWeight(FontWeight.Medium) }
         .width('100%').height(48).justifyContent(FlexAlign.Center).backgroundColor(StudyTheme.ACCENT).borderRadius(StudyTheme.RADIUS_MD)
         .onClick(() => { if (this.currentIndex < this.slides.length - 1) this.swiperController.showNext(); else this.handleGetStarted() })
         if (this.currentIndex < this.slides.length - 1) Text('跳过').fontSize(StudyTheme.FONT_SM).fontColor(StudyTheme.TEXT_SECONDARY).margin({ top: StudyTheme.SPACE_LG }).onClick(() => { this.handleSkip() })

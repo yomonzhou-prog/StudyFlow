@@ -24,7 +24,7 @@ export struct ChipSelector {
         ForEach(this.options, (option: ChipOption) => {
           Text(option.count !== undefined ? `${option.label} (${option.count})` : option.label)
             .fontSize(Theme.FONT_SM)
-            .fontColor(this.selectedValue === option.value ? '#FFFFFF' : Theme.TEXT_SECONDARY)
+            .fontColor(this.selectedValue === option.value ? Theme.TEXT_INVERSE : Theme.TEXT_SECONDARY)
             .backgroundColor(this.selectedValue === option.value ? Theme.PRIMARY : Theme.BG)
             .borderRadius(Theme.RADIUS_XL)
             .padding({ left: 14, right: 14, top: 6, bottom: 6 })

@@ -72,7 +72,7 @@ export struct QuestionBankPage {
       Row() {
         Text('开始随机刷题')
           .fontSize(StudyTheme.FONT_SM)
-          .fontColor('#FFFFFF')
+          .fontColor(StudyTheme.TEXT_INVERSE)
           .fontWeight(FontWeight.Medium)
       }
       .width('100%')

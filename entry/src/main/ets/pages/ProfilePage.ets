@@ -118,7 +118,7 @@ export struct ProfilePage {
           if (this.authStore.getCurrentUser()?.isGuest) {
             Row() {
               Text('登录/注册（完整功能）')
-                .fontSize(Theme.FONT_SM).fontColor('#FFFFFF').fontWeight(FontWeight.Medium)
+                .fontSize(Theme.FONT_SM).fontColor(Theme.TEXT_INVERSE).fontWeight(FontWeight.Medium)
             }
             .width('100%').height(44).justifyContent(FlexAlign.Center)
             .backgroundColor(Theme.PRIMARY).borderRadius(Theme.RADIUS_MD)

@@ -7,7 +7,7 @@ import { Theme } from '../common/Theme'
 
 @Component
 export struct MockBanner {
-  @Prop mockMessage: string = '离线演示模式'
+  @Prop mockMessage: string = '本地演示模式'
   @Prop apiMessage: string = ''
   build() {
     if (Constants.USE_MOCK || !Constants.DEEPSEEK_API_KEY) {

@@ -93,7 +93,7 @@ struct CourseAnalysisPage {
     if (cardResult.data) {
       this.planStore.setReviewCards(cardResult.data)
 
-      const modeLabel = cardResult.isMock ? 'Mock' : 'AI'
+      const modeLabel = cardResult.isMock ? '本地' : '云端'
       promptAction.showToast({
         message: `${modeLabel}生成 ${cardResult.data.length} 张复习卡片`,
         duration: 2000
@@ -112,14 +112,14 @@ struct CourseAnalysisPage {
       PageHeader({ title: '课程解析结果' })
 
       if (this.isLoading) {
-        LoadingView({ message: 'AI正在解析课程资料...' })
+        LoadingView({ message: '正在解析课程资料...' })
       } else if (!this.profile) {
         this.buildNoProfile()
       } else {
         Scroll() {
           Column() {
             // Mock提示
-            MockBanner({ mockMessage: '解析结果（Mock模式）', apiMessage: 'DeepSeek 解析结果' })
+            MockBanner({ mockMessage: '解析结果（演示模式）', apiMessage: '智能解析结果' })
 
             // 课程名称与摘要
             this.buildSummary()
@@ -441,7 +441,7 @@ struct CourseAnalysisPage {
 
       Button('返回输入')
         .fontSize(Theme.FONT_MD)
-        .fontColor('#FFFFFF')
+        .fontColor(Theme.TEXT_INVERSE)
         .backgroundColor(Theme.PRIMARY)
         .borderRadius(Theme.RADIUS_MD)
         .margin({ top: Theme.SPACING_LG })

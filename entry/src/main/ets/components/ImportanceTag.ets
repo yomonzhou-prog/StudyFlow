@@ -20,7 +20,7 @@ export struct ImportanceTag {
 
   getColor(): string {
     switch (this.importance) {
-      case 'critical': return '#FFFFFF'
+      case 'critical': return Theme.TEXT_INVERSE
       case 'high': return Theme.IMPORTANCE_HIGH_COLOR
       case 'medium': return Theme.IMPORTANCE_MEDIUM_COLOR
       case 'low': return Theme.IMPORTANCE_LOW_COLOR

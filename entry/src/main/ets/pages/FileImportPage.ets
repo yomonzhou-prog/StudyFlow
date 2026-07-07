@@ -198,9 +198,9 @@ struct FileImportPage {
 
             // 开始解析按钮
             Row() {
-              Text('开始 AI 解析')
+              Text('开始智能解析')
                 .fontSize(StudyTheme.FONT_MD)
-                .fontColor('#FFFFFF')
+                .fontColor(StudyTheme.TEXT_INVERSE)
                 .fontWeight(FontWeight.Medium)
             }
             .width('100%')
@@ -213,7 +213,7 @@ struct FileImportPage {
             })
 
             // 提示信息
-            Text('AI 将自动识别试卷题目、补充标准答案和考点解析。理科公式将以数学符号渲染。')
+            Text('系统将自动识别试卷题目、补充标准答案和考点解析。理科公式将以数学符号渲染。')
               .fontSize(StudyTheme.FONT_XS)
               .fontColor(StudyTheme.TEXT_HINT)
               .lineHeight(18)
@@ -234,7 +234,7 @@ struct FileImportPage {
             .width(48).height(48)
             .color(StudyTheme.ACCENT)
             .margin({ bottom: StudyTheme.SPACE_XL })
-          Text('AI 正在解析试卷...')
+          Text('正在解析试卷...')
             .fontSize(StudyTheme.FONT_LG)
             .fontColor(StudyTheme.TEXT_PRIMARY)
             .fontWeight(FontWeight.Medium)
@@ -418,7 +418,7 @@ struct FileImportPage {
               Row() {
                 Text(`导入题库 · 开始刷题 (${this.parsedTotalCount}题)`)
                   .fontSize(StudyTheme.FONT_SM)
-                  .fontColor('#FFFFFF')
+                  .fontColor(StudyTheme.TEXT_INVERSE)
                   .fontWeight(FontWeight.Medium)
               }
               .layoutWeight(1)
